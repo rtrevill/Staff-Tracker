@@ -32,6 +32,30 @@ function questions(){
 
 };
 
+function addDepartment(){
+    inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'newDepart',
+            message: 'What is the name of the department?'
+        }
+
+    ])
+    .then((answer) => {
+        console.log(answer)
+        const deptName = answer.newDept;
+        db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
+        console.log("new dept inserted");
+        questions();
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+}
+
+
 questions();
 
 const db = mysql.createConnection(
@@ -49,7 +73,9 @@ const db = mysql.createConnection(
 
 
 function viewRequests(request){
-    if (request = "View All Employees"){
+    const selection = request.options;
+    console.log(selection);
+    if (selection === "View All Employees"){
         db.query(`SELECT employee.id, first_name, last_name, title, name AS department, salary, manager_id FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id`, (err, result) => {
             if (err){
                 console.log(err);
@@ -60,7 +86,7 @@ function viewRequests(request){
             return;
         });
     }
-    if (request = "View All Departments"){
+    if (selection === "View All Departments"){
         db.query(`SELECT * FROM department ORDER BY name ASC`, (err, result) => {
             if (err){
                 console.log(err);
@@ -71,7 +97,7 @@ function viewRequests(request){
             return;
         });
     }
-    if (request = "View All Roles"){
+    if (selection === "View All Roles"){
         db.query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`, (err, result) => {
             if (err){
                 console.log(err);
@@ -82,6 +108,11 @@ function viewRequests(request){
             return;
         });
     }
+    if (selection === "Add Department"){
+        console.log("New Dept selected");
+        addDepartment();
+    }
+
     else {
         console.log('No return')
     }
