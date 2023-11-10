@@ -44,9 +44,9 @@ function addDepartment(){
     ])
     .then((answer) => {
         console.log(answer)
-        const deptName = answer.newDept;
+        const deptName = answer.newDepart;
         db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
-        console.log("new dept inserted");
+        console.log(`added ${deptName} to the database`);
         questions();
     })
     .catch((err) => {
@@ -55,6 +55,63 @@ function addDepartment(){
 
 }
 
+function addRole(){
+    let departmentArray = [];
+    let deptDetails = [];
+    let deptChoices = db.query(`SELECT id, name FROM department`, (err, result) => {
+        if (result){
+            deptDetails = [...result];
+            console.log(deptDetails);
+            result.forEach(element => {
+                let x = element.name;
+                departmentArray.push(x);
+                console.log(departmentArray);                
+            });
+            return departmentArray;
+        }
+        else
+            console.log(err)
+    });
+    inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'newRole',
+            message: 'What is the name of the role?'
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: 'What is the salary of the role?'
+        },
+        {
+            type: 'list',
+            name: 'roleDept',
+            message: 'Which department does the role belong to?',
+            choices: departmentArray
+        }
+    ])
+    .then((answer) => {
+        console.log(answer)
+        const roleName = answer.newRole;
+        const roleSal = answer.roleSalary;
+        const roleDept = answer.roleDept;
+        let roleID;
+        deptDetails.forEach(entry => {
+            if (roleDept === entry.name){
+                roleID = entry.id
+                console.log(roleID)
+            };
+        });
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
+        console.log(`added ${roleName} to the database`);
+        questions();
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+}
 
 questions();
 
@@ -111,6 +168,10 @@ function viewRequests(request){
     if (selection === "Add Department"){
         console.log("New Dept selected");
         addDepartment();
+    }
+    if (selection === "Add Role"){
+        console.log("New Role selected");
+        addRole();
     }
 
     else {
