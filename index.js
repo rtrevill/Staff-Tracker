@@ -114,18 +114,18 @@ function addRole(){
 }
 
 function addEmployee(){
-    let departmentArray = [];
-    let deptDetails = [];
-    let deptChoices = db.query(`SELECT id, name FROM department`, (err, result) => {
+    let roleArray = [];
+    let roleDetails = [];
+    let roleChoices = db.query(`SELECT id, title FROM role`, (err, result) => {
         if (result){
-            deptDetails = [...result];
-            console.log(deptDetails);
+            roleDetails = [...result];
+            console.log(roleDetails);
             result.forEach(element => {
-                let x = element.name;
-                departmentArray.push(x);
-                console.log(departmentArray);                
+                let x = element.title;
+                roleArray.push(x);
+                console.log(roleArray);                
             });
-            return departmentArray;
+            return roleArray;
         }
         else
             console.log(err)
@@ -134,35 +134,35 @@ function addEmployee(){
     .prompt([
         {
             type: 'input',
-            name: 'newRole',
-            message: 'What is the name of the role?'
+            name: 'firstName',
+            message: "What is the employee's first name?"
         },
         {
             type: 'input',
-            name: 'roleSalary',
-            message: 'What is the salary of the role?'
+            name: 'lastName',
+            message: 'What is the employees last name?'
         },
         {
             type: 'list',
-            name: 'roleDept',
-            message: 'Which department does the role belong to?',
-            choices: departmentArray
+            name: 'employRole',
+            message: "What is the employee's role?",
+            choices: roleArray
         }
     ])
     .then((answer) => {
         console.log(answer)
-        const roleName = answer.newRole;
-        const roleSal = answer.roleSalary;
-        const roleDept = answer.roleDept;
+        const fName = answer.firstName;
+        const lName = answer.lastName;
+        const eRole = answer.employRole;
         let roleID;
-        deptDetails.forEach(entry => {
-            if (roleDept === entry.name){
+        roleDetails.forEach(entry => {
+            if (eRole === entry.title){
                 roleID = entry.id
                 console.log(roleID)
             };
         });
-        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
-        console.log(`added ${roleName} to the database`);
+        db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ("${fName}", "${lName}",${roleID})`);
+        console.log(`added ${fName} ${lName} to the database`);
         questions();
     })
     .catch((err) => {
@@ -231,9 +231,9 @@ function viewRequests(request){
         console.log("New Role selected");
         addRole();
     }
-    if (selection === "Add Role"){
-        console.log("New Role selected");
-        addRole();
+    if (selection === "Add Employee"){
+        console.log("New Employee selected");
+        addEmployee();
     }
 
 
