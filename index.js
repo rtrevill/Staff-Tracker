@@ -113,6 +113,64 @@ function addRole(){
 
 }
 
+function addEmployee(){
+    let departmentArray = [];
+    let deptDetails = [];
+    let deptChoices = db.query(`SELECT id, name FROM department`, (err, result) => {
+        if (result){
+            deptDetails = [...result];
+            console.log(deptDetails);
+            result.forEach(element => {
+                let x = element.name;
+                departmentArray.push(x);
+                console.log(departmentArray);                
+            });
+            return departmentArray;
+        }
+        else
+            console.log(err)
+    });
+    inquirer
+    .prompt([
+        {
+            type: 'input',
+            name: 'newRole',
+            message: 'What is the name of the role?'
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: 'What is the salary of the role?'
+        },
+        {
+            type: 'list',
+            name: 'roleDept',
+            message: 'Which department does the role belong to?',
+            choices: departmentArray
+        }
+    ])
+    .then((answer) => {
+        console.log(answer)
+        const roleName = answer.newRole;
+        const roleSal = answer.roleSalary;
+        const roleDept = answer.roleDept;
+        let roleID;
+        deptDetails.forEach(entry => {
+            if (roleDept === entry.name){
+                roleID = entry.id
+                console.log(roleID)
+            };
+        });
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
+        console.log(`added ${roleName} to the database`);
+        questions();
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+}
+
 questions();
 
 const db = mysql.createConnection(
@@ -173,6 +231,11 @@ function viewRequests(request){
         console.log("New Role selected");
         addRole();
     }
+    if (selection === "Add Role"){
+        console.log("New Role selected");
+        addRole();
+    }
+
 
     else {
         console.log('No return')
