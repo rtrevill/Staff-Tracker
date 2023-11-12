@@ -31,18 +31,18 @@ function questions(){
 
 };
 
-function getArray1(){
-    let nameA = [];
-    let nameA2 = [];
-    let nameB = [];
-    let nameB2 = [];
-    let nameC = [];
+function employeeAndRole(){
+    let nameArray = [];
+    let nameDetails = [];
+    let roleArray = [];
+    let roleDetails = [];
+    let array2Send = [];
     db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
             if (result){
-                nameA2 = [...result];
+                nameDetails = [...result];
                 result.forEach(item => {
-                    let x = (item.first_name + " " + item.last_name);
-                    nameA.push(x);
+                    let fullName = (item.first_name + " " + item.last_name);
+                    nameArray.push(fullName);
                 })
                 return;
             }
@@ -51,14 +51,14 @@ function getArray1(){
         });
     db.query(`SELECT id, title FROM role`, (err, result) => {
         if (result){
-            nameB2 = [...result];
+            roleDetails = [...result];
             result.forEach(item => {
-                let x = (item.title);
-                nameB.push(x);
+                let roleTitle = (item.title);
+                roleArray.push(roleTitle);
             })
-            if ((nameA)&&(nameB)){
-                nameC.push(nameA, nameA2, nameB, nameB2);
-                updateRole(nameC);
+            if ((nameArray)&&(roleArray)){
+                array2Send.push(nameArray, nameDetails, roleArray, roleDetails);
+                updateRole(array2Send);
             }
         
             return;
@@ -256,19 +256,16 @@ function addEmployee(data){
 
 };
 
-function updateRole(roley){
-    let fullNames = roley[0];
-    let namesData = roley[1];
-    let roleArray = roley[2];
-    let rolesData = roley[3];
-    console.log(fullNames,roleArray);
+function updateRole(data){
+    const [nameArray, nameDetails, roleArray, roleDetails] = data;
+
     inquirer
     .prompt([
         {
             type: 'list',
             name: 'fullName',
             message: "Which employee's role do you want to update?",
-            choices: fullNames
+            choices: nameArray
         },
         {
             type: 'list',
@@ -278,33 +275,29 @@ function updateRole(roley){
         }
     ])
     .then((answer) => {
-        console.log(answer)
         const selectName = answer.fullName;
         const selectRole = answer.newRole;
         let nameID;
-        namesData.forEach(entry => {
+        nameDetails.forEach(entry => {
             if (selectName === (entry.first_name + " " + entry.last_name)){
                 nameID = entry.id
-                console.log(nameID)
             };
         });
         let roleID;
-        rolesData.forEach(entry => {
+        roleDetails.forEach(entry => {
             if (selectRole === (entry.title)){
                 roleID = entry.id
-                console.log(roleID)
             };
         });
 
-        db.query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${nameID}`);
-        console.log(`updated employees role`);
-        questions();
+        db.promise().query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${nameID}`)
+        .then(console.log(`updated employees role`))
+        .then(questions())
+        .catch(err => console.log(err));
     })
-    .catch((err) => {
-        console.log(err)
-    })
+    .catch(err => console.log(err));
     
-}
+};
 
 
 questions();
@@ -379,18 +372,15 @@ function viewRequests(request){
         return;
     }
     if (selection === "Update Employee Role"){
-        console.log("Updating employee");
-        let roles = getArray1()
-        console.log(roles);
-        // updateRole(roles);
-    }
-    if (selection === "Quit"){
-        console.log("Goodbye")
+        employeeAndRole()
         return;
     }
-
-
+    if (selection === "Quit"){
+        console.log("Goodbye");
+        process.exit();
+    }
     else {
         console.log('No return')
     }
+    return;
 };
