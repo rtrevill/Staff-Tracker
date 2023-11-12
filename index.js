@@ -1,27 +1,13 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+const Queries = require('./queries');
+const Questions = require('./questions');
+
 
 function questions(){
     inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'options',
-                message: 'what would you like to do? (Use arrow keys)',
-                choices: [
-                    "View All Employees",
-                    "Add Employee",
-                    "Update Employee Role",
-                    "View All Roles",
-                    "Add Role",
-                    "View All Departments",
-                    "Add Department",
-                    "Quit"
-                ]
-            }
-
-        ])
+        .prompt(new Questions().listQuestions())
         .then((answer) => {
             viewRequests(answer)
         })
@@ -119,6 +105,7 @@ function getDeptDetails(){
 function addRole(deptArrays){
     const[departmentArray, deptDetails] = deptArrays;
     
+
     inquirer
     .prompt([
         {
@@ -315,6 +302,8 @@ const db = mysql.createConnection(
   );
   
 function viewEmployees(){
+
+    // const employ = queries.employees()
     db.query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manager
                 FROM employee e 
                 LEFT OUTER JOIN employee m ON m.id = e.manager_id
@@ -349,15 +338,9 @@ function viewRequests(request){
         });
     }
     if (selection === "View All Roles"){
-        db.query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`, (err, result) => {
-            if (err){
-                console.log(err);
-                return;
-            }
-            console.table(result);
-            questions();
-            return;
-        });
+        new Queries.sqlQueries().viewRoles()
+        setTimeout(() => questions(),100);
+        return;       
     }
     if (selection === "Add Department"){
         addDepartment();
@@ -383,4 +366,9 @@ function viewRequests(request){
         console.log('No return')
     }
     return;
-};
+}
+
+module.exports = {
+    addRole,
+    questions
+}
