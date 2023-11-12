@@ -83,7 +83,6 @@ function addDepartment(){
 
     ])
     .then((answer) => {
-        console.log(answer)
         const deptName = answer.newDepart;
         db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
         console.log(`added ${deptName} to the database`);
@@ -93,25 +92,33 @@ function addDepartment(){
         console.log(err)
     })
 
-}
+};
 
-function addRole(){
+
+function getDeptDetails(){
     let departmentArray = [];
     let deptDetails = [];
-    let deptChoices = db.query(`SELECT id, name FROM department`, (err, result) => {
+    db.query(`SELECT id, name FROM department`, (err, result) => {
         if (result){
             deptDetails = [...result];
-            console.log(deptDetails);
-            result.forEach(element => {
-                let x = element.name;
+            result.forEach(departm => {
+                let x = departm.name;
                 departmentArray.push(x);
-                console.log(departmentArray);                
             });
-            return departmentArray;
+            let completeDeptArray = [];
+            completeDeptArray.push(departmentArray, deptDetails);
+            addRole(completeDeptArray);
+            return;
         }
         else
-            console.log(err)
+            console.log(err);
     });
+};
+
+
+function addRole(deptArrays){
+    const[departmentArray, deptDetails] = deptArrays;
+    
     inquirer
     .prompt([
         {
@@ -132,7 +139,6 @@ function addRole(){
         }
     ])
     .then((answer) => {
-        console.log(answer)
         const roleName = answer.newRole;
         const roleSal = answer.roleSalary;
         const roleDept = answer.roleDept;
@@ -140,7 +146,6 @@ function addRole(){
         deptDetails.forEach(entry => {
             if (roleDept === entry.name){
                 roleID = entry.id
-                console.log(roleID)
             };
         });
         db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
@@ -153,37 +158,50 @@ function addRole(){
 
 }
 
-function addEmployee(){
-    let roleArray = [];
-    let roleDetails = [];
-    let manArray = [];
-    let manDetails = [];
 
-    let roleChoices = db.query(`SELECT id, title FROM role`, (err, result) => {
+function roleAndManagerDetails(){
+    let roleArray=[];
+    let roleDetails=[];
+    let manArray=[];
+    let manDetails=[];
+    let arrayToSend=[];
+
+    db.query(`SELECT id, title FROM role`, (err, result) => {
         if (result){
             roleDetails = [...result];
             result.forEach(element => {
                 let x = element.title;
                 roleArray.push(x);
             });
-            return roleArray;
+            return;
         }
         else
-            console.log(err)
-    });
+            console.log(err);
+    })
 
-    let manChoices = db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
+    db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
         if (result){
             manDetails = [...result];
             result.forEach(item => {
                 let x = (item.first_name + " " + item.last_name);
                 manArray.push(x);
-            })
+                })
+                if ((roleArray)&&(manArray)){
+                    arrayToSend.push(roleArray, roleDetails, manArray, manDetails);
+                    addEmployee(arrayToSend);   
+                }   
             return;
         }
         else
         console.log(err);
-    });
+    })
+
+};
+
+
+
+function addEmployee(data){
+    const [roleArray, roleDetails, manArray, manDetails] = data;
 
     inquirer
     .prompt([
@@ -229,14 +247,14 @@ function addEmployee(){
         })
         db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${fName}", "${lName}",${roleID},${manID})`)
         .then(console.log(`added ${fName} ${lName} to the database`))
-        questions()
-        .catch(console.log(err));
+        .then(questions())
+        .catch(err => console.log(err));
     })
     .catch((err) => {
         console.log(err)
-    })
+    });
 
-}
+};
 
 function updateRole(roley){
     let fullNames = roley[0];
@@ -349,16 +367,16 @@ function viewRequests(request){
         });
     }
     if (selection === "Add Department"){
-        console.log("New Dept selected");
         addDepartment();
+        return;
     }
     if (selection === "Add Role"){
-        console.log("New Role selected");
-        addRole();
+        getDeptDetails();
+        return;
     }
     if (selection === "Add Employee"){
-        console.log("New Employee selected");
-        addEmployee();
+        roleAndManagerDetails();
+        return;
     }
     if (selection === "Update Employee Role"){
         console.log("Updating employee");
