@@ -34,35 +34,34 @@ function questions(){
 
 function getArray1(){
     let nameA = [];
+    let nameA2 = [];
     let nameB = [];
+    let nameB2 = [];
     let nameC = [];
-    db.query(`SELECT first_name, last_name FROM employee`, (err, result) => {
+    db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
             if (result){
+                nameA2 = [...result];
                 result.forEach(item => {
                     let x = (item.first_name + " " + item.last_name);
                     nameA.push(x);
                 })
-                // console.log(nameA);
-                // updateRole(nameA);
                 return;
             }
             else
             console.log(err);
         });
-    db.query(`SELECT title FROM role`, (err, result) => {
+    db.query(`SELECT id, title FROM role`, (err, result) => {
         if (result){
+            nameB2 = [...result];
             result.forEach(item => {
                 let x = (item.title);
                 nameB.push(x);
             })
-            // console.log(nameB);
             if ((nameA)&&(nameB)){
-                nameC.push(nameA);
-                nameC.push(nameB);
+                nameC.push(nameA, nameA2, nameB, nameB2);
                 updateRole(nameC);
             }
         
-            // updateRole(nameA);
             return;
         }
         else
@@ -214,60 +213,47 @@ function addEmployee(){
 }
 
 function updateRole(roley){
-    console.log(roley);
     let fullNames = roley[0];
-    let roleArray = roley[1];
+    let namesData = roley[1];
+    let roleArray = roley[2];
+    let rolesData = roley[3];
     console.log(fullNames,roleArray);
-    // let roleDetails = [];
-    // db.query(`SELECT id, title FROM role`, (err, result) => {
-    //     if (result){
-    //         roleDetails = [...result];
-    //         // console.log(roleDetails);
-    //         result.forEach(element => {
-    //             let x = element.title;
-    //             roleArray.push(x);
-    //             // console.log(roleArray);                
-    //         });
-    //         return roleArray;
-    //     }
-    //     else
-    //         console.log(err)
-    // })
-    // .then(
     inquirer
     .prompt([
         {
             type: 'list',
-            name: 'firstName',
-            message: "What is the employee's first name?",
+            name: 'fullName',
+            message: "Which employee's role do you want to update?",
             choices: fullNames
         },
         {
             type: 'list',
-            name: 'employRole',
-            message: "What is the employee's role?",
+            name: 'newRole',
+            message: "Which role do you want to assign to the selected employee?",
             choices: roleArray
-        },
-        {
-            type: 'input',
-            name: 'lastName',
-            message: 'What is the employees last name?'
-        },
+        }
     ])
     .then((answer) => {
         console.log(answer)
-        const fName = answer.firstName;
-        const lName = answer.lastName;
-        const eRole = answer.employRole;
+        const selectName = answer.fullName;
+        const selectRole = answer.newRole;
+        let nameID;
+        namesData.forEach(entry => {
+            if (selectName === (entry.first_name + " " + entry.last_name)){
+                nameID = entry.id
+                console.log(nameID)
+            };
+        });
         let roleID;
-        roleDetails.forEach(entry => {
-            if (eRole === entry.title){
+        rolesData.forEach(entry => {
+            if (selectRole === (entry.title)){
                 roleID = entry.id
                 console.log(roleID)
             };
         });
-        db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ("${fName}", "${lName}",${roleID})`);
-        console.log(`added ${fName} ${lName} to the database`);
+
+        db.query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${nameID}`);
+        console.log(`updated employees role`);
         questions();
     })
     .catch((err) => {
