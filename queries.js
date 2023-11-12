@@ -17,18 +17,12 @@ const db = mysql.createConnection(
 
 class sqlQueries {
 
+
 viewRoles = function(){
-    db.query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`, (err, result) => {
-        if (err){
-            console.log(err);
-            return;
-        }
-        console.table(result);
-        return result;
-    });
-};
-
-
+    db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
+    .then(result => console.log(result[0]))
+    .catch(err => console.log(err));
+}
 }
 
 
