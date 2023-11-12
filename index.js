@@ -32,6 +32,48 @@ function questions(){
 
 };
 
+function getArray1(){
+    let nameA = [];
+    let nameB = [];
+    let nameC = [];
+    db.query(`SELECT first_name, last_name FROM employee`, (err, result) => {
+            if (result){
+                result.forEach(item => {
+                    let x = (item.first_name + " " + item.last_name);
+                    nameA.push(x);
+                })
+                // console.log(nameA);
+                // updateRole(nameA);
+                return;
+            }
+            else
+            console.log(err);
+        });
+    db.query(`SELECT title FROM role`, (err, result) => {
+        if (result){
+            result.forEach(item => {
+                let x = (item.title);
+                nameB.push(x);
+            })
+            // console.log(nameB);
+            if ((nameA)&&(nameB)){
+                nameC.push(nameA);
+                nameC.push(nameB);
+                updateRole(nameC);
+            }
+        
+            // updateRole(nameA);
+            return;
+        }
+        else
+        console.log(err);
+    });
+
+
+};
+
+
+
 function addDepartment(){
     inquirer
     .prompt([
@@ -171,6 +213,70 @@ function addEmployee(){
 
 }
 
+function updateRole(roley){
+    console.log(roley);
+    let fullNames = roley[0];
+    let roleArray = roley[1];
+    console.log(fullNames,roleArray);
+    // let roleDetails = [];
+    // db.query(`SELECT id, title FROM role`, (err, result) => {
+    //     if (result){
+    //         roleDetails = [...result];
+    //         // console.log(roleDetails);
+    //         result.forEach(element => {
+    //             let x = element.title;
+    //             roleArray.push(x);
+    //             // console.log(roleArray);                
+    //         });
+    //         return roleArray;
+    //     }
+    //     else
+    //         console.log(err)
+    // })
+    // .then(
+    inquirer
+    .prompt([
+        {
+            type: 'list',
+            name: 'firstName',
+            message: "What is the employee's first name?",
+            choices: fullNames
+        },
+        {
+            type: 'list',
+            name: 'employRole',
+            message: "What is the employee's role?",
+            choices: roleArray
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: 'What is the employees last name?'
+        },
+    ])
+    .then((answer) => {
+        console.log(answer)
+        const fName = answer.firstName;
+        const lName = answer.lastName;
+        const eRole = answer.employRole;
+        let roleID;
+        roleDetails.forEach(entry => {
+            if (eRole === entry.title){
+                roleID = entry.id
+                console.log(roleID)
+            };
+        });
+        db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ("${fName}", "${lName}",${roleID})`);
+        console.log(`added ${fName} ${lName} to the database`);
+        questions();
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+    
+}
+
+
 questions();
 
 const db = mysql.createConnection(
@@ -234,6 +340,16 @@ function viewRequests(request){
     if (selection === "Add Employee"){
         console.log("New Employee selected");
         addEmployee();
+    }
+    if (selection === "Update Employee Role"){
+        console.log("Updating employee");
+        let roles = getArray1()
+        console.log(roles);
+        // updateRole(roles);
+    }
+    if (selection === "Quit"){
+        console.log("Goodbye")
+        return;
     }
 
 
