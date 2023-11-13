@@ -323,22 +323,18 @@ function viewEmployees(){
 function viewRequests(request){
     const selection = request.options;
     if (selection === "View All Employees"){
-        viewEmployees()
-        return;
+        new Queries.sqlQueries().viewEmployees();
+        setTimeout(() => questions(),100);
+        return;       
         };
     if (selection === "View All Departments"){
-        db.query(`SELECT * FROM department ORDER BY name ASC`, (err, result) => {
-            if (err){
-                console.log(err);
-                return;
-            }
-            console.table(result);
-            questions();
-            return;
-        });
-    }
+        new Queries.sqlQueries().viewDeparts();
+        setTimeout(() => questions(),100);
+        return;       
+        };
+    
     if (selection === "View All Roles"){
-        new Queries.sqlQueries().viewRoles()
+        new Queries.sqlQueries().viewRoles();
         setTimeout(() => questions(),100);
         return;       
     }

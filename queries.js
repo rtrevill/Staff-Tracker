@@ -20,10 +20,31 @@ class sqlQueries {
 
 viewRoles = function(){
     db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
-    .then(result => console.log(result[0]))
+    .then(result => console.table(result[0]))
     .catch(err => console.log(err));
 }
+
+viewDeparts = function(){
+    db.promise().query(`SELECT * FROM department ORDER BY name ASC`)
+    .then(result => console.table(result[0]))
+    .catch(err => console.log(err));
 }
+
+viewEmployees = function(){
+    db.promise().query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manager
+    FROM employee e 
+    LEFT OUTER JOIN employee m ON m.id = e.manager_id
+    JOIN role ON e.role_id = role.id 
+    JOIN department ON department.id = role.department_id`)
+    .then(result => console.table(result[0]))
+    .catch(err => console.log(err));
+}
+
+
+
+}
+
+
 
 
 
