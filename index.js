@@ -244,47 +244,23 @@ const db = mysql.createConnection(
 
 function viewRequests(request){
     const selection = request.options;
-    if (selection === "View All Employees"){
-        new Queries.sqlQueries().viewEmployees();
-        setTimeout(() => questions(),100);
-        return;       
-        };
-    if (selection === "View All Departments"){
-        new Queries.sqlQueries().viewDeparts();
-        setTimeout(() => questions(),100);
-        return;       
-        };
-    
-    if (selection === "View All Roles"){
-        new Queries.sqlQueries().viewRoles();
-        setTimeout(() => questions(),100);
-        return;       
-    }
-    if (selection === "Add Department"){
-        addDepartment();
-        return;
-    }
-    if (selection === "Add Role"){
-        getDeptDetails();
-        return;
-    }
-    if (selection === "Add Employee"){
-        roleAndManagerDetails();
-        return;
-    }
-    if (selection === "Update Employee Role"){
-        employeeAndRole()
-        return;
-    }
     if (selection === "Quit"){
         console.log("Goodbye");
         process.exit();
     }
-    else {
-        console.log('No return')
+    const viewCheck = new RegExp('View*');
+    if (viewCheck.test(selection)){
+    (selection === "View All Employees") ? new Queries.sqlQueries().viewEmployees():
+    (selection === "View All Departments") ? new Queries.sqlQueries().viewDeparts():
+    (selection === "View All Roles") ? new Queries.sqlQueries().viewRoles(): console.log('No Return 1');
+    setTimeout(() => questions(), 200);
     }
+    (selection === "Add Department") ? addDepartment():
+    (selection === "Add Role") ? getDeptDetails():
+    (selection === "Add Employee") ? roleAndManagerDetails():
+    (selection === "Update Employee Role") ? employeeAndRole() : console.log('No Return 2');
     return;
-}
+};
 
 
 module.exports = {
