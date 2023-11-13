@@ -51,6 +51,12 @@ addDept = function(response){
     db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
     console.log(`added ${deptName} to the database`);
 };
+
+newRole = function(roleName, roleSal, roleID){
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
+    console.log(`added ${roleName} to the database`);
+};
+
 }
 
 
