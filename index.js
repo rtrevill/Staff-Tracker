@@ -121,6 +121,52 @@ function roleAndManagerDetails(){
 };   
 
 
+function employeesManagers(){
+    let fullNames = [];
+    let employeeResults = [];
+    db.promise().query(`SELECT id, first_name, last_name, manager_id FROM employee`)
+    .then((result) => {
+        employeeResults = [...result[0]];
+        result[0].forEach(name =>{
+            let fName;
+            fName = (name.first_name + " " + name.last_name)
+            fullNames.push(fName);
+        })
+    chooseNewMan(employeeResults, fullNames);
+    })
+    .catch(err => console.log(err));
+};
+
+function chooseNewMan(employeeResults, fullNames){
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: "Which employee would you like to choose a new manager for?",
+                choices: fullNames
+            },
+            {
+                type: 'list',
+                name: 'Manager',
+                message: 'Who is the new manager?',
+                choices: fullNames
+            }
+            ])
+        .then((answer) => {
+            const person1 = fullNames.indexOf(answer.employee);
+            const person2 = fullNames.indexOf(answer.Manager);
+            const idOfOne = employeeResults[person1].id;
+            const idOfTwo = employeeResults[person2].id;
+            db.promise().query(`UPDATE employee SET manager_id = ${idOfTwo} WHERE id= ${idOfOne}`)
+            .then(() => {
+                console.log('Manager updated')
+                questions();
+            })
+        })
+        .catch(err => console.log(err))
+};
+
 function addEmployee(roleArray, roleDetails, manArray, manDetails){
 
     inquirer
@@ -210,7 +256,8 @@ function viewRequests(request){
     (selection === "Add Department") ? addDepartment():
     (selection === "Add Role") ? getDeptDetails():
     (selection === "Add Employee") ? roleAndManagerDetails():
-    (selection === "Update Employee Role") ? employeeAndRole() : console.log('No Return 2');
+    (selection === "Update Employee Role") ? employeeAndRole(): 
+    (selection === "Update employee managers") ? employeesManagers(): console.log('No Return 2');
     return;
 };
 

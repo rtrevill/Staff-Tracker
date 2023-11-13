@@ -15,6 +15,7 @@ listQuestions = function(){
                 "Add Role",
                 "View All Departments",
                 "Add Department",
+                "Update employee managers",
                 "Quit"
             ]
         }
