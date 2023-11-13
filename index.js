@@ -46,16 +46,11 @@ function employeeAndRole(){
 function addDepartment(){
     inquirer
     .prompt(new Questions().addDeptQuestions())
-    .then((answer) => {
-        const deptName = answer.newDepart;
-        db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
-        console.log(`added ${deptName} to the database`);
-        questions();
+    .then((response) => { 
+        new Queries.sqlQueries().addDept(response);
+        setTimeout(()=>questions(),200);
     })
-    .catch((err) => {
-        console.log(err)
-    })
-
+    .catch(err => console.log(err))
 };
 
 

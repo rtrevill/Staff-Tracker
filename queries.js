@@ -46,6 +46,11 @@ upRole = function(roleID, nameID){
     .catch(err => console.log(err));
 };
 
+addDept = function(response){
+    const deptName = response.newDepart;
+    db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
+    console.log(`added ${deptName} to the database`);
+};
 }
 
 
