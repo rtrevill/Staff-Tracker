@@ -17,7 +17,6 @@ function questions(){
 
 };
 
-
 function employeeAndRole(){
     let nameArray = [];
     let nameDetails = [];
@@ -231,6 +230,7 @@ function viewRequests(request){
     const viewCheck = new RegExp('View*');
     if (viewCheck.test(selection)){
     (selection === "View All Employees") ? new Queries.sqlQueries().viewEmployees():
+    (selection === "View employees by manager") ? new Queries.sqlQueries().viewByMan():
     (selection === "View All Departments") ? new Queries.sqlQueries().viewDeparts():
     (selection === "View All Roles") ? new Queries.sqlQueries().viewRoles(): console.log('No Return 1');
     setTimeout(() => questions(), 200);

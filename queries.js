@@ -67,6 +67,16 @@ upMan = function(idOfOne, idOfTwo){
     .catch(err => console.log(err));
 }
 
+viewByMan = function(){
+    db.promise().query(`SELECT e.first_name, e.last_name, m.first_name AS manager
+                        FROM employee e
+                        LEFT OUTER JOIN employee m
+                        ON m.id = e.manager_id
+                        ORDER BY m.first_name ASC`)
+    .then(result => console.table(result[0]))
+    .catch(err => console.log(err));
+};
+
 };
 
 module.exports = { sqlQueries }
