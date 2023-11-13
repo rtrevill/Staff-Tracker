@@ -63,4 +63,4 @@ newEmployee = function(fName, lName, roleID, manID){
 
 };
 
-module.exports = {sqlQueries}
+module.exports = { sqlQueries }
