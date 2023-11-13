@@ -139,36 +139,19 @@ function employeesManagers(){
 
 function chooseNewMan(employeeResults, fullNames){
     inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'employee',
-                message: "Which employee would you like to choose a new manager for?",
-                choices: fullNames
-            },
-            {
-                type: 'list',
-                name: 'Manager',
-                message: 'Who is the new manager?',
-                choices: fullNames
-            }
-            ])
+        .prompt(new Questions().newManagerQuestions(fullNames))
         .then((answer) => {
             const person1 = fullNames.indexOf(answer.employee);
             const person2 = fullNames.indexOf(answer.Manager);
             const idOfOne = employeeResults[person1].id;
             const idOfTwo = employeeResults[person2].id;
-            db.promise().query(`UPDATE employee SET manager_id = ${idOfTwo} WHERE id= ${idOfOne}`)
-            .then(() => {
-                console.log('Manager updated')
-                questions();
+            new Queries.sqlQueries().upMan(idOfOne, idOfTwo);
+            setTimeout(() => questions(),200);
             })
-        })
         .catch(err => console.log(err))
 };
 
 function addEmployee(roleArray, roleDetails, manArray, manDetails){
-
     inquirer
     .prompt(new Questions().addEmployQuestions(roleArray, manArray))
     .then((answer) => {
