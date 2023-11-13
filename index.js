@@ -98,44 +98,30 @@ function roleAndManagerDetails(){
     let roleDetails=[];
     let manArray=[];
     let manDetails=[];
-    let arrayToSend=[];
 
-    db.query(`SELECT id, title FROM role`, (err, result) => {
-        if (result){
-            roleDetails = [...result];
-            result.forEach(element => {
+    db.promise().query(`SELECT id, title FROM role`)
+    .then((result) => {
+            roleDetails = [...result[0]];
+            result[0].forEach(element => {
                 let x = element.title;
                 roleArray.push(x);
-            });
-            return;
-        }
-        else
-            console.log(err);
-    })
-
-    db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
-        if (result){
-            manDetails = [...result];
-            result.forEach(item => {
+            })})
+    .catch(err => console.log(err));
+    
+    db.promise().query(`SELECT id, first_name, last_name FROM employee`)
+    .then((result) => {
+            manDetails = [...result[0]];
+            result[0].forEach(item => {
                 let x = (item.first_name + " " + item.last_name);
                 manArray.push(x);
                 })
-                if ((roleArray)&&(manArray)){
-                    arrayToSend.push(roleArray, roleDetails, manArray, manDetails);
-                    addEmployee(arrayToSend);   
-                }   
-            return;
-        }
-        else
-        console.log(err);
-    })
-
-};
+                addEmployee(roleArray, roleDetails, manArray, manDetails);
+                })
+    .catch(err => console.log(err));
+};   
 
 
-
-function addEmployee(data){
-    const [roleArray, roleDetails, manArray, manDetails] = data;
+function addEmployee(roleArray, roleDetails, manArray, manDetails){
 
     inquirer
     .prompt(new Questions().addEmployQuestions(roleArray, manArray))
@@ -156,10 +142,8 @@ function addEmployee(data){
                 manID = entry.id
             }
         })
-        db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${fName}", "${lName}",${roleID},${manID})`)
-        .then(console.log(`added ${fName} ${lName} to the database`))
-        .then(questions())
-        .catch(err => console.log(err));
+        new Queries.sqlQueries().newEmployee(fName, lName, roleID, manID);
+        setTimeout(() => questions(),200);
     })
     .catch((err) => {
         console.log(err)
