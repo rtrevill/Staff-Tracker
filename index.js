@@ -53,7 +53,7 @@ function addDepartment(){
 };
 
 
-function getDeptDetails(){
+function getDeptDetails(number){
     let departmentArray = [];
     let deptDetails = [];
     db.promise().query(`SELECT id, name FROM department`)
@@ -63,7 +63,12 @@ function getDeptDetails(){
                 let x = departm.name;
                 departmentArray.push(x);
             })
-            addRole(departmentArray, deptDetails);
+            if (number === 'One'){
+                addRole(departmentArray, deptDetails);
+            }
+            if (number === 'Two'){
+                deleteDepartment(departmentArray, deptDetails);
+            }
             })
     .catch(err => console.log(err));
 };
@@ -92,7 +97,7 @@ function addRole(departmentArray, deptDetails){
 };
 
 
-function roleAndManagerDetails(){
+function roleAndManagerDetails(number){
     let roleArray=[];
     let roleDetails=[];
     let manArray=[];
@@ -114,13 +119,15 @@ function roleAndManagerDetails(){
                 let x = (item.first_name + " " + item.last_name);
                 manArray.push(x);
                 })
-                addEmployee(roleArray, roleDetails, manArray, manDetails);
+                (number=== 'One') ? addEmployee(roleArray, roleDetails, manArray, manDetails):
+                (number=== 'Two') ? deleteRole(roleArray, roleDetails):
+                console.log('Bad Reference');
                 })
     .catch(err => console.log(err));
 };   
 
 
-function employeesManagers(){
+function employeesManagers(number){
     let fullNames = [];
     let employeeResults = [];
     db.promise().query(`SELECT id, first_name, last_name, manager_id FROM employee`)
@@ -131,7 +138,9 @@ function employeesManagers(){
             fName = (name.first_name + " " + name.last_name)
             fullNames.push(fName);
         })
-    chooseNewMan(employeeResults, fullNames);
+    (number === 'One') ? chooseNewMan(employeeResults, fullNames):
+    (number === 'Two') ? deleteEmployee(employeeResults, fullNames):
+    console.log('Bad reference');
     })
     .catch(err => console.log(err));
 };
@@ -206,6 +215,49 @@ function updateRole(nameArray, nameDetails, roleArray, roleDetails){
 };
 
 
+function deleteEmployee(employeeResults, fullNames){
+    inquirer
+    .prompt(new Questions().deleteEmployeeQuestions(fullNames))
+    .then((result) => {
+        let choice = fullNames.indexOf(result.employee);
+        let empID = employeeResults[choice].id;
+        db.promise().query(`DELETE FROM employee WHERE id = ${empID}`)
+        .then(() => {
+            console.log('employee deleted')
+            questions()
+        })
+        .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+
+};
+
+function deleteRole(roleArray, roleDetails){
+    inquirer
+    .prompt(new Questions().deleteRoleQuestions(roleArray))
+    .then(async (result) => {
+        let choice = roleArray.indexOf(result.role);
+        let roleID = roleDetails[choice].id;
+        await db.promise().query(`DELETE FROM role WHERE id = ${roleID}`)
+        console.log('Role deleted');
+        questions();
+    })
+    .catch(err => console.log(err));
+};
+
+function deleteDepartment(departmentArray, deptDetails){
+    inquirer
+    .prompt(new Questions().deleteDepartQuestions(departmentArray))
+    .then(async (result) => {
+        let choice = departmentArray.indexOf(result.department);
+        let departID = deptDetails[choice].id;
+        await db.promise().query(`DELETE FROM department WHERE id = ${departID}`)
+        console.log('Department deleted');
+        questions();
+    })
+    .catch(err => console.log(err));
+};
+
 questions();
 
 const db = mysql.createConnection(
@@ -231,16 +283,20 @@ function viewRequests(request){
     if (viewCheck.test(selection)){
     (selection === "View All Employees") ? new Queries.sqlQueries().viewEmployees():
     (selection === "View employees by manager") ? new Queries.sqlQueries().viewByMan():
+    (selection === "View employees by department") ? new Queries.sqlQueries().viewByDepart():
     (selection === "View All Departments") ? new Queries.sqlQueries().viewDeparts():
     (selection === "View All Roles") ? new Queries.sqlQueries().viewRoles(): console.log('No Return 1');
     setTimeout(() => questions(), 200);
     return;
     }
+    (selection === "Delete Employee") ? employeesManagers('Two'):
     (selection === "Add Department") ? addDepartment():
-    (selection === "Add Role") ? getDeptDetails():
-    (selection === "Add Employee") ? roleAndManagerDetails():
+    (selection === "Add Role") ? getDeptDetails('One'):
+    (selection === "Delete Department") ? getDeptDetails('Two'):
+    (selection === "Add Employee") ? roleAndManagerDetails('One'):
+    (selection === "Delete Role") ? roleAndManagerDetails('Two'):
     (selection === "Update Employee Role") ? employeeAndRole(): 
-    (selection === "Update employee managers") ? employeesManagers(): console.log('No Return 2');
+    (selection === "Update employee managers") ? employeesManagers('One'): console.log('No Return 2');
     return;
 };
 

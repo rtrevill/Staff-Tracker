@@ -10,12 +10,16 @@ listQuestions = function(){
             choices: [
                 "View All Employees",
                 "View employees by manager",
+                "View employees by department",
                 "Add Employee",
+                "Delete Employee",
                 "Update Employee Role",
                 "View All Roles",
                 "Add Role",
+                "Delete Role",
                 "View All Departments",
                 "Add Department",
+                "Delete Department",
                 "Update employee managers",
                 "Quit"
             ]
@@ -119,7 +123,43 @@ newManagerQuestions = function(fullNames){
         }
     ]
     return updMan;
-}
+};
+
+deleteEmployeeQuestions = function(fullNames){
+    const delEmp = [
+        {
+            type: 'list',
+            name: 'employee',
+            message: 'Which employee would you like to delete?',
+            choices: fullNames
+        }
+    ]
+    return delEmp;
+};
+
+deleteRoleQuestions = function(roleArray){
+    const delRole = [
+        {
+            type: 'list',
+            name: 'role',
+            message: 'Which role would you like to delete?',
+            choices: roleArray
+        }
+    ]
+    return delRole;
+};
+
+deleteDepartQuestions = function(departmentArray){
+    const delDep = [
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Which department would you like to delete?',
+            choices: departmentArray
+        }
+    ]
+    return delDep;
+};
 
 };
 

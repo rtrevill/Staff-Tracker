@@ -77,6 +77,19 @@ viewByMan = function(){
     .catch(err => console.log(err));
 };
 
+viewByDepart = function(){
+    db.promise().query(`SELECT first_name, last_name, name AS department
+                        FROM employee
+                        JOIN role
+                        ON role.id = employee.role_id
+                        JOIN department
+                        ON role.department_id = department.id
+                        ORDER BY name ASC`)
+    .then(result => console.table(result[0]))
+    .catch(err => console.log(err));
+};
+
+
 };
 
 module.exports = { sqlQueries }
