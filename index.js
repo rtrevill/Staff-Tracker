@@ -17,46 +17,31 @@ function questions(){
 
 };
 
+
 function employeeAndRole(){
     let nameArray = [];
     let nameDetails = [];
     let roleArray = [];
     let roleDetails = [];
-    let array2Send = [];
-    db.query(`SELECT id, first_name, last_name FROM employee`, (err, result) => {
-            if (result){
-                nameDetails = [...result];
-                result.forEach(item => {
+    db.promise().query(`SELECT id, first_name, last_name FROM employee`)
+                .then((result) => {
+                nameDetails = [...result[0]];
+                result[0].forEach(item => {
                     let fullName = (item.first_name + " " + item.last_name);
                     nameArray.push(fullName);
-                })
-                return;
-            }
-            else
-            console.log(err);
-        });
-    db.query(`SELECT id, title FROM role`, (err, result) => {
-        if (result){
-            roleDetails = [...result];
-            result.forEach(item => {
-                let roleTitle = (item.title);
-                roleArray.push(roleTitle);
-            })
-            if ((nameArray)&&(roleArray)){
-                array2Send.push(nameArray, nameDetails, roleArray, roleDetails);
-                updateRole(array2Send);
-            }
-        
-            return;
-        }
-        else
-        console.log(err);
-    });
-
+                })})
+    db.promise().query(`SELECT id, title FROM role`)
+                .then((result) => {
+                    // console.log(result);
+                    roleDetails = [...result[0]];
+                    result[0].forEach(item => {
+                        let roleTitle = (item.title);
+                        roleArray.push(roleTitle);
+                    })})
+                .then(result => updateRole(nameArray, nameDetails, roleArray, roleDetails))
+                .catch(err => console.log(err));
 
 };
-
-
 
 function addDepartment(){
     inquirer
@@ -196,8 +181,7 @@ function addEmployee(data){
 
 };
 
-function updateRole(data){
-    const [nameArray, nameDetails, roleArray, roleDetails] = data;
+function updateRole(nameArray, nameDetails, roleArray, roleDetails){
 
     inquirer
     .prompt(new Questions().updateRoleQuestions(nameArray, roleArray))
@@ -217,13 +201,10 @@ function updateRole(data){
             };
         });
 
-        db.promise().query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${nameID}`)
-        .then(console.log(`updated employees role`))
-        .then(questions())
-        .catch(err => console.log(err));
+        new Queries.sqlQueries().upRole(roleID, nameID);
+        setTimeout(() => questions(), 200);
     })
     .catch(err => console.log(err));
-    
 };
 
 
@@ -254,6 +235,7 @@ function viewRequests(request){
     (selection === "View All Departments") ? new Queries.sqlQueries().viewDeparts():
     (selection === "View All Roles") ? new Queries.sqlQueries().viewRoles(): console.log('No Return 1');
     setTimeout(() => questions(), 200);
+    return;
     }
     (selection === "Add Department") ? addDepartment():
     (selection === "Add Role") ? getDeptDetails():
