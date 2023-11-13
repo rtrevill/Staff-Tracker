@@ -9,6 +9,7 @@ listQuestions = function(){
             message: 'what would you like to do? (Use arrow keys)',
             choices: [
                 "View All Employees",
+                "View employees by manager",
                 "Add Employee",
                 "Update Employee Role",
                 "View All Roles",
