@@ -57,27 +57,20 @@ function addDepartment(){
 function getDeptDetails(){
     let departmentArray = [];
     let deptDetails = [];
-    db.query(`SELECT id, name FROM department`, (err, result) => {
-        if (result){
-            deptDetails = [...result];
-            result.forEach(departm => {
+    db.promise().query(`SELECT id, name FROM department`)
+    .then((result) => {
+            deptDetails = [...result[0]];
+            result[0].forEach(departm => {
                 let x = departm.name;
                 departmentArray.push(x);
-            });
-            let completeDeptArray = [];
-            completeDeptArray.push(departmentArray, deptDetails);
-            addRole(completeDeptArray);
-            return;
-        }
-        else
-            console.log(err);
-    });
+            })
+            addRole(departmentArray, deptDetails);
+            })
+    .catch(err => console.log(err));
 };
 
 
-function addRole(deptArrays){
-    const[departmentArray, deptDetails] = deptArrays;
-    
+function addRole(departmentArray, deptDetails){
 
     inquirer
     .prompt(new Questions().addRollQuestions(departmentArray))
@@ -91,15 +84,13 @@ function addRole(deptArrays){
                 roleID = entry.id
             };
         });
-        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
-        console.log(`added ${roleName} to the database`);
-        questions();
+        new Queries.sqlQueries().newRole(roleName, roleSal, roleID);
+        setTimeout(() => questions(),200);
     })
     .catch((err) => {
         console.log(err)
-    })
-
-}
+    });
+};
 
 
 function roleAndManagerDetails(){
