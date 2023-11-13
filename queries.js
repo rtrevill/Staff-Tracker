@@ -61,6 +61,12 @@ newEmployee = function(fName, lName, roleID, manID){
     .catch(err => console.log(err));
 };
 
+upMan = function(idOfOne, idOfTwo){
+    db.promise().query(`UPDATE employee SET manager_id = ${idOfTwo} WHERE id= ${idOfOne}`)
+    .then(console.log('Manager updated'))
+    .catch(err => console.log(err));
+}
+
 };
 
 module.exports = { sqlQueries }
