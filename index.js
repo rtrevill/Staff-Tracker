@@ -60,14 +60,7 @@ function employeeAndRole(){
 
 function addDepartment(){
     inquirer
-    .prompt([
-        {
-            type: 'input',
-            name: 'newDepart',
-            message: 'What is the name of the department?'
-        }
-
-    ])
+    .prompt(new Questions().addDeptQuestions())
     .then((answer) => {
         const deptName = answer.newDepart;
         db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
@@ -107,24 +100,7 @@ function addRole(deptArrays){
     
 
     inquirer
-    .prompt([
-        {
-            type: 'input',
-            name: 'newRole',
-            message: 'What is the name of the role?'
-        },
-        {
-            type: 'input',
-            name: 'roleSalary',
-            message: 'What is the salary of the role?'
-        },
-        {
-            type: 'list',
-            name: 'roleDept',
-            message: 'Which department does the role belong to?',
-            choices: departmentArray
-        }
-    ])
+    .prompt(new Questions().addRollQuestions(departmentArray))
     .then((answer) => {
         const roleName = answer.newRole;
         const roleSal = answer.roleSalary;
@@ -191,30 +167,7 @@ function addEmployee(data){
     const [roleArray, roleDetails, manArray, manDetails] = data;
 
     inquirer
-    .prompt([
-        {
-            type: 'input',
-            name: 'firstName',
-            message: "What is the employee's first name?"
-        },
-        {
-            type: 'input',
-            name: 'lastName',
-            message: 'What is the employees last name?'
-        },
-        {
-            type: 'list',
-            name: 'employRole',
-            message: "What is the employee's role?",
-            choices: roleArray
-        },
-        {
-            type: 'list',
-            name: 'employMan',
-            message: "Who is the employee's manager?",
-            choices: manArray
-        }
-    ])
+    .prompt(new Questions().addEmployQuestions(roleArray, manArray))
     .then((answer) => {
         const fName = answer.firstName;
         const lName = answer.lastName;
@@ -247,20 +200,7 @@ function updateRole(data){
     const [nameArray, nameDetails, roleArray, roleDetails] = data;
 
     inquirer
-    .prompt([
-        {
-            type: 'list',
-            name: 'fullName',
-            message: "Which employee's role do you want to update?",
-            choices: nameArray
-        },
-        {
-            type: 'list',
-            name: 'newRole',
-            message: "Which role do you want to assign to the selected employee?",
-            choices: roleArray
-        }
-    ])
+    .prompt(new Questions().updateRoleQuestions(nameArray, roleArray))
     .then((answer) => {
         const selectName = answer.fullName;
         const selectRole = answer.newRole;
@@ -301,24 +241,6 @@ const db = mysql.createConnection(
     console.log(`Connected to the employees_db database.`)
   );
   
-function viewEmployees(){
-
-    // const employ = queries.employees()
-    db.query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manager
-                FROM employee e 
-                LEFT OUTER JOIN employee m ON m.id = e.manager_id
-                JOIN role ON e.role_id = role.id 
-                JOIN department ON department.id = role.department_id`
-                , (err, result) => {
-        if (err){
-            console.log(err);
-            return;
-        }
-        console.table(result);
-        questions();
-});
-
-}
 
 function viewRequests(request){
     const selection = request.options;
@@ -363,6 +285,7 @@ function viewRequests(request){
     }
     return;
 }
+
 
 module.exports = {
     addRole,
