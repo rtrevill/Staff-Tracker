@@ -29,12 +29,29 @@ viewDeparts = function(){
 };
 
 viewEmployees = function(){
-    db.promise().query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manager
+    db.promise().query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manfirst, m.last_name AS manlast
     FROM employee e 
     LEFT OUTER JOIN employee m ON m.id = e.manager_id
     JOIN role ON e.role_id = role.id 
     JOIN department ON department.id = role.department_id`)
-    .then(result => console.table(result[0]))
+    .then(result => {
+        const newArray = result[0].map(({id, first_name, last_name, title, department, salary, manfirst, manlast}) =>
+        ({  'id': id,
+            'first_name': first_name,
+            'last_name': last_name,
+            'title': title,
+            'department': department,
+            'salary': salary,
+            'manager': manfirst + " " + manlast}))
+        newArray.forEach(element => {
+            if (element.manager === 'null null'){
+                element.manager = null;
+            };
+        });
+        
+        console.table(newArray)
+    
+    })
     .catch(err => console.log(err));
 };
 
@@ -68,12 +85,23 @@ upMan = function(idOfOne, idOfTwo){
 }
 
 viewByMan = function(){
-    db.promise().query(`SELECT e.first_name, e.last_name, m.first_name AS manager
+    db.promise().query(`SELECT e.first_name, e.last_name, m.first_name AS manfirst, m.last_name AS manlast
                         FROM employee e
                         LEFT OUTER JOIN employee m
                         ON m.id = e.manager_id
                         ORDER BY m.first_name ASC`)
-    .then(result => console.table(result[0]))
+    .then(result => {
+        const newArray = result[0].map(({first_name, last_name, manfirst, manlast}) =>
+        ({  'first_name': first_name,
+            'last_name': last_name,
+            'manager': manfirst + " " + manlast}))
+        newArray.forEach(element => {
+            if (element.manager === 'null null'){
+                element.manager = null;
+            };
+        })
+        console.table(newArray);
+        })
     .catch(err => console.log(err));
 };
 
