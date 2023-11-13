@@ -1,5 +1,4 @@
 const mysql = require('mysql2');
-const Index = require('./index');
 
 
 const db = mysql.createConnection(
@@ -16,7 +15,6 @@ const db = mysql.createConnection(
 
 
 class sqlQueries {
-
 
 viewRoles = function(){
     db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
@@ -57,31 +55,12 @@ newRole = function(roleName, roleSal, roleID){
     console.log(`added ${roleName} to the database`);
 };
 
-}
+newEmployee = function(fName, lName, roleID, manID){
+    db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${fName}", "${lName}",${roleID},${manID})`)
+    .then(console.log(`added ${fName} ${lName} to the database`))
+    .catch(err => console.log(err));
+};
 
+};
 
-
-
-
-
-
-
-function employees(){
-    let result = db.query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manager
-    FROM employee e 
-    LEFT OUTER JOIN employee m ON m.id = e.manager_id
-    JOIN role ON e.role_id = role.id 
-    JOIN department ON department.id = role.department_id`);
-    return result;
-
-}
-
-
-
-
-
-module.exports = {
-    sqlQueries,
-    employees,
-    
-}
+module.exports = {sqlQueries}
