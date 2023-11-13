@@ -5,6 +5,19 @@ const Queries = require('./queries');
 const Questions = require('./questions');
 
 
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      // MySQL username,
+      user: 'root',
+      // TODO: Add MySQL password here
+      password: '{rgh>fl@YOkUPL3O>+SN',
+      database: 'employees_db'
+    },
+    console.log(`Connected to the employees_db database.`)
+  );
+
+
 function questions(){
     inquirer
         .prompt(new Questions().listQuestions())
@@ -15,41 +28,6 @@ function questions(){
             console.log(err)
         })
 
-};
-
-function employeeAndRole(){
-    let nameArray = [];
-    let nameDetails = [];
-    let roleArray = [];
-    let roleDetails = [];
-    db.promise().query(`SELECT id, first_name, last_name FROM employee`)
-                .then((result) => {
-                nameDetails = [...result[0]];
-                result[0].forEach(item => {
-                    let fullName = (item.first_name + " " + item.last_name);
-                    nameArray.push(fullName);
-                })})
-    db.promise().query(`SELECT id, title FROM role`)
-                .then((result) => {
-                    // console.log(result);
-                    roleDetails = [...result[0]];
-                    result[0].forEach(item => {
-                        let roleTitle = (item.title);
-                        roleArray.push(roleTitle);
-                    })})
-                .then(result => updateRole(nameArray, nameDetails, roleArray, roleDetails))
-                .catch(err => console.log(err));
-
-};
-
-function addDepartment(){
-    inquirer
-    .prompt(new Questions().addDeptQuestions())
-    .then((response) => { 
-        new Queries.sqlQueries().addDept(response);
-        setTimeout(()=>questions(),200);
-    })
-    .catch(err => console.log(err))
 };
 
 
@@ -63,37 +41,11 @@ function getDeptDetails(number){
                 let x = departm.name;
                 departmentArray.push(x);
             })
-            if (number === 'One'){
-                addRole(departmentArray, deptDetails);
-            }
-            if (number === 'Two'){
-                deleteDepartment(departmentArray, deptDetails);
-            }
+            (number === 'One') ? addRole(departmentArray, deptDetails):
+            (number === 'Two') ? deleteDepartment(departmentArray, deptDetails):
+            console.log("Bad Reference");
             })
     .catch(err => console.log(err));
-};
-
-
-function addRole(departmentArray, deptDetails){
-
-    inquirer
-    .prompt(new Questions().addRollQuestions(departmentArray))
-    .then((answer) => {
-        const roleName = answer.newRole;
-        const roleSal = answer.roleSalary;
-        const roleDept = answer.roleDept;
-        let roleID;
-        deptDetails.forEach(entry => {
-            if (roleDept === entry.name){
-                roleID = entry.id
-            };
-        });
-        new Queries.sqlQueries().newRole(roleName, roleSal, roleID);
-        setTimeout(() => questions(),200);
-    })
-    .catch((err) => {
-        console.log(err)
-    });
 };
 
 
@@ -119,8 +71,10 @@ function roleAndManagerDetails(number){
                 let x = (item.first_name + " " + item.last_name);
                 manArray.push(x);
                 })
+                console.log('');
                 (number=== 'One') ? addEmployee(roleArray, roleDetails, manArray, manDetails):
                 (number=== 'Two') ? deleteRole(roleArray, roleDetails):
+                (number=== 'Three') ? updateRole(manArray, manDetails, roleArray, roleDetails):
                 console.log('Bad Reference');
                 })
     .catch(err => console.log(err));
@@ -145,19 +99,40 @@ function employeesManagers(number){
     .catch(err => console.log(err));
 };
 
-function chooseNewMan(employeeResults, fullNames){
+
+function addDepartment(){
     inquirer
-        .prompt(new Questions().newManagerQuestions(fullNames))
-        .then((answer) => {
-            const person1 = fullNames.indexOf(answer.employee);
-            const person2 = fullNames.indexOf(answer.Manager);
-            const idOfOne = employeeResults[person1].id;
-            const idOfTwo = employeeResults[person2].id;
-            new Queries.sqlQueries().upMan(idOfOne, idOfTwo);
-            setTimeout(() => questions(),200);
-            })
-        .catch(err => console.log(err))
+    .prompt(new Questions().addDeptQuestions())
+    .then((response) => { 
+        new Queries.sqlQueries().addDept(response);
+        setTimeout(()=>questions(),200);
+    })
+    .catch(err => console.log(err))
 };
+
+
+function addRole(departmentArray, deptDetails){
+
+    inquirer
+    .prompt(new Questions().addRollQuestions(departmentArray))
+    .then((answer) => {
+        const roleName = answer.newRole;
+        const roleSal = answer.roleSalary;
+        const roleDept = answer.roleDept;
+        let roleID;
+        deptDetails.forEach(entry => {
+            if (roleDept === entry.name){
+                roleID = entry.id
+            };
+        });
+        new Queries.sqlQueries().newRole(roleName, roleSal, roleID);
+        setTimeout(() => questions(),200);
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+};
+
 
 function addEmployee(roleArray, roleDetails, manArray, manDetails){
     inquirer
@@ -187,6 +162,24 @@ function addEmployee(roleArray, roleDetails, manArray, manDetails){
     });
 
 };
+
+
+
+
+function chooseNewMan(employeeResults, fullNames){
+    inquirer
+        .prompt(new Questions().newManagerQuestions(fullNames))
+        .then((answer) => {
+            const person1 = fullNames.indexOf(answer.employee);
+            const person2 = fullNames.indexOf(answer.Manager);
+            const idOfOne = employeeResults[person1].id;
+            const idOfTwo = employeeResults[person2].id;
+            new Queries.sqlQueries().upMan(idOfOne, idOfTwo);
+            setTimeout(() => questions(),200);
+            })
+        .catch(err => console.log(err))
+};
+
 
 function updateRole(nameArray, nameDetails, roleArray, roleDetails){
 
@@ -260,18 +253,6 @@ function deleteDepartment(departmentArray, deptDetails){
 
 questions();
 
-const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      // MySQL username,
-      user: 'root',
-      // TODO: Add MySQL password here
-      password: '{rgh>fl@YOkUPL3O>+SN',
-      database: 'employees_db'
-    },
-    console.log(`Connected to the employees_db database.`)
-  );
-  
 
 function viewRequests(request){
     const selection = request.options;
@@ -295,7 +276,7 @@ function viewRequests(request){
     (selection === "Delete Department") ? getDeptDetails('Two'):
     (selection === "Add Employee") ? roleAndManagerDetails('One'):
     (selection === "Delete Role") ? roleAndManagerDetails('Two'):
-    (selection === "Update Employee Role") ? employeeAndRole(): 
+    (selection === "Update Employee Role") ? roleAndManagerDetails('Three'): 
     (selection === "Update employee managers") ? employeesManagers('One'): console.log('No Return 2');
     return;
 };
