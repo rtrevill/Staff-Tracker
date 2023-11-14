@@ -3,6 +3,7 @@ const inquirer = require('inquirer');
 
 const Queries = require('./queries');
 const Questions = require('./questions');
+const SourceArrays = require('./files/source-arrays')
 
 
 const db = mysql.createConnection(
@@ -31,73 +32,73 @@ function questions(){
 };
 
 
-function getDeptDetails(number){
-    let departmentArray = [];
-    let deptDetails = [];
-    db.promise().query(`SELECT id, name FROM department`)
-    .then((result) => {
-            deptDetails = [...result[0]];
-            result[0].forEach(departm => {
-                let x = departm.name;
-                departmentArray.push(x);
-            })
-            (number === 'One') ? addRole(departmentArray, deptDetails):
-            (number === 'Two') ? deleteDepartment(departmentArray, deptDetails):
-            console.log("Bad Reference");
-            })
-    .catch(err => console.log(err));
-};
+// function getDeptDetails(number){
+//     let departmentArray = [];
+//     let deptDetails = [];
+//     db.promise().query(`SELECT id, name FROM department`)
+//     .then((result) => {
+//             deptDetails = [...result[0]];
+//             result[0].forEach(departm => {
+//                 let x = departm.name;
+//                 departmentArray.push(x);
+//             })
+//             (number === 'One') ? addRole(departmentArray, deptDetails):
+//             (number === 'Two') ? deleteDepartment(departmentArray, deptDetails):
+//             console.log("Bad Reference");
+//             })
+//     .catch(err => console.log(err));
+// };
 
 
-function roleAndManagerDetails(number){
-    let roleArray=[];
-    let roleDetails=[];
-    let manArray=[];
-    let manDetails=[];
+// function roleAndManagerDetails(number){
+//     let roleArray=[];
+//     let roleDetails=[];
+//     let manArray=[];
+//     let manDetails=[];
 
-    db.promise().query(`SELECT id, title FROM role`)
-    .then((result) => {
-            roleDetails = [...result[0]];
-            result[0].forEach(element => {
-                let x = element.title;
-                roleArray.push(x);
-            })})
-    .catch(err => console.log(err));
+//     db.promise().query(`SELECT id, title FROM role`)
+//     .then((result) => {
+//             roleDetails = [...result[0]];
+//             result[0].forEach(element => {
+//                 let x = element.title;
+//                 roleArray.push(x);
+//             })})
+//     .catch(err => console.log(err));
     
-    db.promise().query(`SELECT id, first_name, last_name FROM employee`)
-    .then((result) => {
-            manDetails = [...result[0]];
-            result[0].forEach(item => {
-                let x = (item.first_name + " " + item.last_name);
-                manArray.push(x);
-                })
-                console.log('');
-                (number=== 'One') ? addEmployee(roleArray, roleDetails, manArray, manDetails):
-                (number=== 'Two') ? deleteRole(roleArray, roleDetails):
-                (number=== 'Three') ? updateRole(manArray, manDetails, roleArray, roleDetails):
-                console.log('Bad Reference');
-                })
-    .catch(err => console.log(err));
-};   
+//     db.promise().query(`SELECT id, first_name, last_name FROM employee`)
+//     .then((result) => {
+//             manDetails = [...result[0]];
+//             result[0].forEach(item => {
+//                 let x = (item.first_name + " " + item.last_name);
+//                 manArray.push(x);
+//                 })
+//                 console.log('');
+//                 (number=== 'One') ? addEmployee(roleArray, roleDetails, manArray, manDetails):
+//                 (number=== 'Two') ? deleteRole(roleArray, roleDetails):
+//                 (number=== 'Three') ? updateRole(manArray, manDetails, roleArray, roleDetails):
+//                 console.log('Bad Reference');
+//                 })
+//     .catch(err => console.log(err));
+// };   
 
 
-function employeesManagers(number){
-    let fullNames = [];
-    let employeeResults = [];
-    db.promise().query(`SELECT id, first_name, last_name, manager_id FROM employee`)
-    .then((result) => {
-        employeeResults = [...result[0]];
-        result[0].forEach(name =>{
-            let fName;
-            fName = (name.first_name + " " + name.last_name)
-            fullNames.push(fName);
-        })
-    (number === 'One') ? chooseNewMan(employeeResults, fullNames):
-    (number === 'Two') ? deleteEmployee(employeeResults, fullNames):
-    console.log('Bad reference');
-    })
-    .catch(err => console.log(err));
-};
+// function employeesManagers(number){
+//     let fullNames = [];
+//     let employeeResults = [];
+//     db.promise().query(`SELECT id, first_name, last_name, manager_id FROM employee`)
+//     .then((result) => {
+//         employeeResults = [...result[0]];
+//         result[0].forEach(name =>{
+//             let fName;
+//             fName = (name.first_name + " " + name.last_name)
+//             fullNames.push(fName);
+//         })
+//     (number === 'One') ? chooseNewMan(employeeResults, fullNames):
+//     (number === 'Two') ? deleteEmployee(employeeResults, fullNames):
+//     console.log('Bad reference');
+//     })
+//     .catch(err => console.log(err));
+// };
 
 
 function addDepartment(){
@@ -270,19 +271,27 @@ function viewRequests(request){
     setTimeout(() => questions(), 200);
     return;
     }
-    (selection === "Delete Employee") ? employeesManagers('Two'):
+    (selection === "Delete Employee") ? new SourceArrays.BaseInformation().employeesManagers('Two'):
     (selection === "Add Department") ? addDepartment():
-    (selection === "Add Role") ? getDeptDetails('One'):
-    (selection === "Delete Department") ? getDeptDetails('Two'):
-    (selection === "Add Employee") ? roleAndManagerDetails('One'):
-    (selection === "Delete Role") ? roleAndManagerDetails('Two'):
-    (selection === "Update Employee Role") ? roleAndManagerDetails('Three'): 
-    (selection === "Update employee managers") ? employeesManagers('One'): console.log('No Return 2');
+    (selection === "Add Role") ? new SourceArrays.BaseInformation().getDeptDetails('One'):
+    (selection === "Delete Department") ? new SourceArrays.BaseInformation().getDeptDetails('Two'):
+    (selection === "Add Employee") ? new SourceArrays.BaseInformation().roleAndManagerDetails('One'):
+    (selection === "Delete Role") ? new SourceArrays.BaseInformation().roleAndManagerDetails('Two'):
+    (selection === "Update Employee Role") ? new SourceArrays.BaseInformation().roleAndManagerDetails('Three'): 
+    (selection === "Update employee managers") ? new SourceArrays.BaseInformation().employeesManagers('One'): console.log('No Return 2');
     return;
 };
 
+exports.questions = questions;
+exports.chooseNewMan = chooseNewMan;
+exports.addRole = addRole;
+exports.deleteDepartment = deleteDepartment;
+exports.deleteEmployee = deleteEmployee;
+exports.addEmployee = addEmployee;
+exports.deleteRole = deleteRole;
+exports.updateRole = updateRole;
 
-module.exports = {
-    addRole,
-    questions
-}
+// module.exports = {
+//     chooseNewMan,
+//     questions
+// }
