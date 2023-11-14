@@ -67,3 +67,5 @@ function viewRequests(request){
 
 
 exports.questions = questions;
+module.exports = db;
+global.db = db;

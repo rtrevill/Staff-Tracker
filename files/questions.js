@@ -1,4 +1,3 @@
-
 class Questions{
 
 listQuestions = function(){

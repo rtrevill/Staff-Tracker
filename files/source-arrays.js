@@ -1,21 +1,8 @@
 const mysql = require('mysql2');
 const Implement = require('./implement')
+const index = require('../index');
 
 const funcLink = (new Implement.Functions());
-
-
-const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      // MySQL username,
-      user: 'root',
-      // TODO: Add MySQL password here
-      password: '{rgh>fl@YOkUPL3O>+SN',
-      database: 'employees_db'
-    },
-    console.log(`Connected to the employees_db database.`)
-  );
-
 
 class BaseInformation{
 
