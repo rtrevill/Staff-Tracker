@@ -31,6 +31,7 @@ addRole = function(departmentArray, deptDetails){
 };
 
 addEmployee = function(roleArray, roleDetails, manArray, manDetails){
+    manArray.push('No Manager');
     inquirer
     .prompt(new Questions().addEmployQuestions(roleArray, manArray))
     .then((answer) => {
@@ -45,11 +46,15 @@ addEmployee = function(roleArray, roleDetails, manArray, manDetails){
             };
         });
         let manID;
+        if (eMan === 'No Manager'){
+            manID = null;
+        }
+        else{
         manDetails.forEach(entry => {
             if (eMan === (entry.first_name + " " + entry.last_name)){
                 manID = entry.id
             }
-        })
+        })}
         new Queries.sqlQueries().newEmployee(fName, lName, roleID, manID);
         setTimeout(() => new index.questions(),200);
     })
@@ -139,13 +144,21 @@ updateRole = function(nameArray, nameDetails, roleArray, roleDetails){
 };
 
 chooseNewMan = function(employeeResults, fullNames){
+    const employFullName = [...fullNames];
+    const manFullNames = [...fullNames];
+    manFullNames.push('No Manager');
     inquirer
-        .prompt(new Questions().newManagerQuestions(fullNames))
+        .prompt(new Questions().newManagerQuestions(employFullName, manFullNames))
         .then((answer) => {
             const person1 = fullNames.indexOf(answer.employee);
-            const person2 = fullNames.indexOf(answer.Manager);
             const idOfOne = employeeResults[person1].id;
-            const idOfTwo = employeeResults[person2].id;
+            let idOfTwo;
+            if (answer.Manager === 'No Manager'){
+                (idOfTwo = null)}
+            else{
+            const person2 = fullNames.indexOf(answer.Manager);
+            idOfTwo = employeeResults[person2].id;}
+
             new Queries.sqlQueries().upMan(idOfOne, idOfTwo);
             setTimeout(() => index.questions(),200);
             })

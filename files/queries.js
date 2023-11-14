@@ -41,8 +41,8 @@ viewEmployees = function(){
     db.promise().query(`SELECT e.id, e.first_name, e.last_name, title, name AS department, salary, m.first_name AS manfirst, m.last_name AS manlast
     FROM employee e 
     LEFT OUTER JOIN employee m ON m.id = e.manager_id
-    JOIN role ON e.role_id = role.id 
-    JOIN department ON department.id = role.department_id`)
+    LEFT OUTER JOIN role ON e.role_id = role.id 
+    LEFT OUTER JOIN department ON department.id = role.department_id`)
     .then(result => {
         const newArray = result[0].map(({id, first_name, last_name, title, department, salary, manfirst, manlast}) =>
         ({  'id': id,
