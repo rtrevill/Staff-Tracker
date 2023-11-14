@@ -1,5 +1,7 @@
 const mysql = require('mysql2');
 const index = require('./index');
+const table = require('table').table;
+
 
 const db = mysql.createConnection(
     {
@@ -14,18 +16,37 @@ const db = mysql.createConnection(
   );
 
 
+function displaytable(data){
+    let newArray = [];
+    let arrayTitles = [];
+
+    arrayTitles = Object.keys(data[0]);
+    newArray.push(arrayTitles);
+
+    for (i=0; i<data.length; i++){
+        let ary = Object.values(data[i])
+        newArray.push(ary);
+    };
+
+console.log(table(newArray));
+   
+};
+  
+
+
+
 class sqlQueries {
 
 viewRoles = function(){
     db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
-    .then(result => console.table(result[0]))
+    .then(result => displaytable(result[0]))
     .catch(err => console.log(err));
 
 };
 
 viewDeparts = function(){
     db.promise().query(`SELECT * FROM department ORDER BY name ASC`)
-    .then(result => console.table(result[0]))
+    .then(result => displaytable(result[0]))
     .catch(err => console.log(err));
 };
 
@@ -50,7 +71,7 @@ viewEmployees = function(){
             };
         });
         
-        console.table(newArray)
+        displaytable(newArray);
     
     })
     .catch(err => console.log(err));
@@ -101,7 +122,7 @@ viewByMan = function(){
                 element.manager = null;
             };
         })
-        console.table(newArray);
+        displaytable(newArray);
         })
     .catch(err => console.log(err));
 };
@@ -114,11 +135,11 @@ viewByDepart = function(){
                         JOIN department
                         ON role.department_id = department.id
                         ORDER BY name ASC`)
-    .then(result => console.table(result[0]))
+    .then(result => displaytable(result[0]))
     .catch(err => console.log(err));
 };
 
 
 };
 
-module.exports = { sqlQueries }
+module.exports = {  sqlQueries };

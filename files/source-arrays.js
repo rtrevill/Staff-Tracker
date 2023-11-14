@@ -1,5 +1,8 @@
-const index = require('../index');
 const mysql = require('mysql2');
+const Implement = require('./implement')
+
+const funcLink = (new Implement.Functions());
+
 
 const db = mysql.createConnection(
     {
@@ -27,8 +30,8 @@ getDeptDetails = function(number){
                 departmentArray.push(x);
             })
             console.log("");
-            (number === 'One') ? new index.addRole(departmentArray, deptDetails):
-            (number === 'Two') ? new index.deleteDepartment(departmentArray, deptDetails):
+            (number === 'One') ? funcLink.addRole(departmentArray, deptDetails):
+            (number === 'Two') ? funcLink.deleteDepartment(departmentArray, deptDetails):
             console.log("Bad Reference");
             })
     .catch(err => console.log(err));
@@ -58,9 +61,9 @@ roleAndManagerDetails = function(number){
                 manArray.push(x);
                 })
                 console.log('');
-                (number=== 'One') ? new index.addEmployee(roleArray, roleDetails, manArray, manDetails):
-                (number=== 'Two') ? new index.deleteRole(roleArray, roleDetails):
-                (number=== 'Three') ? new index.updateRole(manArray, manDetails, roleArray, roleDetails):
+                (number=== 'One') ? funcLink.addEmployee(roleArray, roleDetails, manArray, manDetails):
+                (number=== 'Two') ? funcLink.deleteRole(roleArray, roleDetails):
+                (number=== 'Three') ? funcLink.updateRole(manArray, manDetails, roleArray, roleDetails):
                 console.log('Bad Reference');
                 })
     .catch(err => console.log(err));
@@ -79,8 +82,8 @@ employeesManagers = function(number){
             fullNames.push(fName);
         })
         console.log("");
-    (number === 'One') ? new index.chooseNewMan(employeeResults, fullNames):
-    (number === 'Two') ? new index.deleteEmployee(employeeResults, fullNames):
+    (number === 'One') ? funcLink.chooseNewMan(employeeResults, fullNames):
+    (number === 'Two') ? funcLink.deleteEmployee(employeeResults, fullNames):
     console.log('Bad reference');
     })
     .catch(err => console.log(err));
