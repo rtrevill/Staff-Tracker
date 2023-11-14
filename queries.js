@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-
+const index = require('./index');
 
 const db = mysql.createConnection(
     {
@@ -20,6 +20,7 @@ viewRoles = function(){
     db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
     .then(result => console.table(result[0]))
     .catch(err => console.log(err));
+
 };
 
 viewDeparts = function(){
