@@ -106,19 +106,19 @@ updateRoleQuestions = function(nameArray, roleArray){
     return upRoleQuest;
 };
 
-newManagerQuestions = function(fullNames){
+newManagerQuestions = function(employFullName, manFullNames){
     const updMan = [
         {
             type: 'list',
             name: 'employee',
             message: "Which employee would you like to choose a new manager for?",
-            choices: fullNames
+            choices: employFullName
         },
         {
             type: 'list',
             name: 'Manager',
             message: 'Who is the new manager?',
-            choices: fullNames
+            choices: manFullNames
         }
     ]
     return updMan;
