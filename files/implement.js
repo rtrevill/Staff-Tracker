@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-const Queries = require('../queries');
+const Queries = require('./queries');
 const Questions = require('./questions');
 const index = require('../index');
 

@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-const Queries = require('./queries');
+const Queries = require('./files/queries');
 const Questions = require('./files/questions');
 const SourceArrays = require('./files/source-arrays')
 const Implement = require('./files/implement');

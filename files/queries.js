@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const index = require('./index');
+const index = require('../index');
 const table = require('table').table;
 
 
