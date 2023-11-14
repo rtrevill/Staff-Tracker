@@ -29,7 +29,6 @@ function questions(){
         .catch((err) => {
             console.log(err)
         })
-
 };
 
 
@@ -65,5 +64,6 @@ function viewRequests(request){
     (selection === "Update employee managers") ? linkOne.employeesManagers('One'): console.log('No Return 2');
     return;
 };
+
 
 exports.questions = questions;
