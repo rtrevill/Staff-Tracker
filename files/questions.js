@@ -1,3 +1,4 @@
+// Constructor class that contains functions that return the inquirer questions for each query.
 class Questions{
 
 listQuestions = function(){
@@ -20,7 +21,7 @@ listQuestions = function(){
                 "Add Department",
                 "Delete Department",
                 "Update employee managers",
-                "find total wages for department",
+                "Find total wages for department",
                 "Quit"
             ]
         }
@@ -169,7 +170,6 @@ viewByManagerQ = function(manFullNames){
             message: 'For which manager would you like to see a list of employees?',
             choices: manFullNames
         }
-
     ]
     return manCheck;
 };

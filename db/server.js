@@ -1,11 +1,11 @@
 const mysql = require('mysql2');
 
+//Enables mysql to communicate with the employees_db database
+
 const connection = mysql.createConnection(
     {
       host: 'localhost',
-      // MySQL username,
       user: 'root',
-      // TODO: Add MySQL password here
       password: '{rgh>fl@YOkUPL3O>+SN',
       database: 'employees_db'
     },

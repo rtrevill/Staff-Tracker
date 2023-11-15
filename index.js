@@ -1,12 +1,14 @@
+//Use the inquirer npm package
 const inquirer = require('inquirer');
 
+// import links to other related files  
 const Queries = require('./files/queries');
 const Questions = require('./files/questions');
 const SourceArrays = require('./files/source-arrays')
 const Implement = require('./files/implement');
 const db = require('./db/server')
 
-
+//Initial questions when starting the application
 function questions(){
     inquirer
         .prompt(new Questions().listQuestions())
@@ -21,7 +23,7 @@ function questions(){
 questions();
 
 
-
+// Function directing the requests to the appropriate sql query function, or to a function to get the required arrays for the request. 
 function viewRequests(request){
     const linkOne = (new SourceArrays.BaseInformation());
     const query = (new Queries.sqlQueries())
@@ -40,7 +42,7 @@ function viewRequests(request){
     return;
     }
     (selection === "Find employees by department") ? linkOne.getDeptDetails(3):
-    (selection === "find total wages for department") ? linkOne.getDeptDetails(4):
+    (selection === "Find total wages for department") ? linkOne.getDeptDetails(4):
     (selection === "Find employees by manager") ? linkOne.employeesManagers(3):
     (selection === "Delete Employee") ? linkOne.employeesManagers(2):
     (selection === "Add Department") ? new Implement.Functions().addDepartment():

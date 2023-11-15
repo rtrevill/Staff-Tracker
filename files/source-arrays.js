@@ -1,11 +1,12 @@
-const mysql = require('mysql2');
 const Implement = require('./implement')
-const index = require('../index');
 
 const funcLink = (new Implement.Functions());
-
+// Class 'BaseInformation' containing functions that produce the arrays required for further utilisation/processing,
+// so an appropriate SQL query can be made 
 class BaseInformation{
 
+// Function to produce base arrays relating to departments
+// This produces an array with details, and a summarised array to use for inquirer list choices  
 getDeptDetails = function(number){
     let departmentArray = [];
     let deptDetails = [];
@@ -22,11 +23,12 @@ getDeptDetails = function(number){
             (number === 3) ? funcLink.employeesByDept(departmentArray, deptDetails):
             (number === 4) ? funcLink.sumOfSalaries(departmentArray, deptDetails):
             console.log("Bad Reference");
-            })
+    })
     .catch(err => console.log(err));
 };
 
-
+// Function to produce base arrays relating to roles and employees
+// This produces an array for both roles and employees with details, and also summarised arrays to use for inquirer list choices 
 roleAndManagerDetails = function(number){
     let roleArray=[];
     let roleDetails=[];
@@ -48,17 +50,18 @@ roleAndManagerDetails = function(number){
             result[0].forEach(item => {
                 let x = (item.first_name + " " + item.last_name);
                 manArray.push(x);
-                })
-                console.log('');
-                (number=== 1) ? funcLink.addEmployee(roleArray, roleDetails, manArray, manDetails):
-                (number=== 2) ? funcLink.deleteRole(roleArray, roleDetails):
-                (number=== 3) ? funcLink.updateRole(manArray, manDetails, roleArray, roleDetails):
-                console.log('Bad Reference');
-                })
+            })
+            console.log('');
+            (number=== 1) ? funcLink.addEmployee(roleArray, roleDetails, manArray, manDetails):
+            (number=== 2) ? funcLink.deleteRole(roleArray, roleDetails):
+            (number=== 3) ? funcLink.updateRole(manArray, manDetails, roleArray, roleDetails):
+            console.log('Bad Reference');
+        })
     .catch(err => console.log(err));
 };   
 
-
+// Function to produce base arrays relating to employees
+// This produces an array with full details, and a summarised array to use for inquirer list choices  
 employeesManagers = function(number){
     let fullNames = [];
     let employeeResults = [];
@@ -71,10 +74,10 @@ employeesManagers = function(number){
             fullNames.push(fName);
         })
         console.log("");
-    (number === 1) ? funcLink.chooseNewMan(employeeResults, fullNames):
-    (number === 2) ? funcLink.deleteEmployee(employeeResults, fullNames):
-    (number === 3) ? funcLink.viewByManQuest(employeeResults):
-    console.log('Bad reference');
+        (number === 1) ? funcLink.chooseNewMan(employeeResults, fullNames):
+        (number === 2) ? funcLink.deleteEmployee(employeeResults, fullNames):
+        (number === 3) ? funcLink.viewByManQuest(employeeResults):
+        console.log('Bad reference');
     })
     .catch(err => console.log(err));
 };

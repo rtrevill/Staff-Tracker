@@ -1,3 +1,5 @@
+-- Provides information to populate the employees_db database tables.
+
 INSERT INTO department (name)
 VALUES      ("Sales"),
             ("Engineering"),

@@ -1,3 +1,6 @@
+-- Deletes existing Database employees_db, before re-creating it with the 3 tables:
+-- department, role and employees
+
 DROP DATABASE IF EXISTS employees_db;
 
 CREATE DATABASE employees_db;

@@ -1,13 +1,14 @@
-const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
 const Queries = require('./queries');
 const Questions = require('./questions');
 const index = require('../index');
 
-
+//Class 'Functions' contains functions where extra logic needs to be processed in order to make the final SQL query accurate.
+//These often work by refining the arrays produced from the source-arrays.BaseInformation class
 class Functions {
 
+// Inquirer workflow for the Add a new role request
 addRole = function(departmentArray, deptDetails){
 
     inquirer
@@ -30,6 +31,7 @@ addRole = function(departmentArray, deptDetails){
     });
 };
 
+// Function that gains the details of a new employee, then assigns a manager_id number instead of a name
 addEmployee = function(roleArray, roleDetails, manArray, manDetails){
     manArray.push('No Manager');
     inquirer
@@ -39,22 +41,16 @@ addEmployee = function(roleArray, roleDetails, manArray, manDetails){
         const lName = answer.lastName;
         const eRole = answer.employRole;
         const eMan = answer.employMan;
-        let roleID;
-        roleDetails.forEach(entry => {
-            if (eRole === entry.title){
-                roleID = entry.id
-            };
-        });
+        const roleFind = roleDetails.find(item => item.title === eRole)
+        const roleID = roleFind.id
         let manID;
         if (eMan === 'No Manager'){
             manID = null;
         }
         else{
-        manDetails.forEach(entry => {
-            if (eMan === (entry.first_name + " " + entry.last_name)){
-                manID = entry.id
-            }
-        })}
+        const manFind = manDetails.find(item => (item.first_name + " " + item.last_name) === eMan)
+        manID = manFind.id
+        }
         new Queries.sqlQueries().newEmployee(fName, lName, roleID, manID);
         setTimeout(() => new index.questions(),200);
     })
@@ -64,6 +60,7 @@ addEmployee = function(roleArray, roleDetails, manArray, manDetails){
 
 };
 
+// Function for inquirer query to add a new department
 addDepartment = function(){
     inquirer
     .prompt(new Questions().addDeptQuestions())
@@ -74,23 +71,21 @@ addDepartment = function(){
     .catch(err => console.log(err))
 };
     
+// Function that runs inqurer and deletes an employee with an SQL query
 deleteEmployee = function(employeeResults, fullNames){
     inquirer
     .prompt(new Questions().deleteEmployeeQuestions(fullNames))
-    .then((result) => {
+    .then(async (result) => {
         let choice = fullNames.indexOf(result.employee);
         let empID = employeeResults[choice].id;
-        db.promise().query(`DELETE FROM employee WHERE id = ${empID}`)
-        .then(() => {
-            console.log('employee deleted')
-            new index.questions()
-        })
-        .catch(err => console.log(err));
+        await db.promise().query(`DELETE FROM employee WHERE id = ${empID}`)
+        console.log('employee deleted')
+        new index.questions()
     })
     .catch(err => console.log(err));
-
 };
 
+// Function that runs inqurer and deletes a role with an SQL query
 deleteRole = function(roleArray, roleDetails){
     inquirer
     .prompt(new Questions().deleteRoleQuestions(roleArray))
@@ -104,6 +99,7 @@ deleteRole = function(roleArray, roleDetails){
     .catch(err => console.log(err));
 };
 
+// Function that runs inqurer and deletes a department with an SQL query
 deleteDepartment = function(departmentArray, deptDetails){
     inquirer
     .prompt(new Questions().deleteDepartQuestions(departmentArray))
@@ -117,6 +113,8 @@ deleteDepartment = function(departmentArray, deptDetails){
     .catch(err => console.log(err));
 };
 
+// function to run inquirer and then use responses to find id's of the selected employee and role
+// before requesting to run an SQL query
 updateRole = function(nameArray, nameDetails, roleArray, roleDetails){
 
     inquirer
@@ -130,18 +128,16 @@ updateRole = function(nameArray, nameDetails, roleArray, roleDetails){
                 nameID = entry.id
             };
         });
-        let roleID;
-        roleDetails.forEach(entry => {
-            if (selectRole === (entry.title)){
-                roleID = entry.id
-            };
-        });
+        const roleFind = roleDetails.find(item => selectRole === item.title)
+        let roleID = roleFind.id
 
         new Queries.sqlQueries().upRole(roleID, nameID);
         setTimeout(() => new index.questions(), 200);
     })
     .catch(err => console.log(err));
 };
+
+
 
 chooseNewMan = function(employeeResults, fullNames){
     const employFullName = [...fullNames];
