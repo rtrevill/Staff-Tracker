@@ -97,8 +97,8 @@ upMan = function(idOfOne, idOfTwo){
 viewByMan = function(responseID){
     db.promise().query(`SELECT e.id, first_name, last_name, name AS department, title 
         FROM employee e 
-        JOIN role ON e.role_id = role.id
-        JOIN department ON role.department_id = department.id
+        LEFT OUTER JOIN role ON e.role_id = role.id
+        LEFT OUTER JOIN department ON role.department_id = department.id
         WHERE manager_id = ${responseID}`)
     .then(result => { 
         displaytable(result[0])
@@ -114,7 +114,8 @@ viewByDepart = function(responseID){
         JOIN department d ON role.department_id = d.id
         WHERE d.id = ${responseID}`)
     .then(result => { 
-        displaytable(result[0])
+        (result[0].length === 0) ? console.log("No employees in this department"):
+        displaytable(result[0]);
         new index.questions()})
     .catch(err => console.log(err))
 };

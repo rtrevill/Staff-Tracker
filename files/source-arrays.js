@@ -17,10 +17,10 @@ getDeptDetails = function(number){
                 departmentArray.push(x);
             })
             console.log("");
-            (number === 'One') ? funcLink.addRole(departmentArray, deptDetails):
-            (number === 'Two') ? funcLink.deleteDepartment(departmentArray, deptDetails):
-            (number === 'Three') ? funcLink.employeesByDept(departmentArray, deptDetails):
-            (number === 'Four') ? funcLink.sumOfSalaries(departmentArray, deptDetails):
+            (number === 1) ? funcLink.addRole(departmentArray, deptDetails):
+            (number === 2) ? funcLink.deleteDepartment(departmentArray, deptDetails):
+            (number === 3) ? funcLink.employeesByDept(departmentArray, deptDetails):
+            (number === 4) ? funcLink.sumOfSalaries(departmentArray, deptDetails):
             console.log("Bad Reference");
             })
     .catch(err => console.log(err));
@@ -50,9 +50,9 @@ roleAndManagerDetails = function(number){
                 manArray.push(x);
                 })
                 console.log('');
-                (number=== 'One') ? funcLink.addEmployee(roleArray, roleDetails, manArray, manDetails):
-                (number=== 'Two') ? funcLink.deleteRole(roleArray, roleDetails):
-                (number=== 'Three') ? funcLink.updateRole(manArray, manDetails, roleArray, roleDetails):
+                (number=== 1) ? funcLink.addEmployee(roleArray, roleDetails, manArray, manDetails):
+                (number=== 2) ? funcLink.deleteRole(roleArray, roleDetails):
+                (number=== 3) ? funcLink.updateRole(manArray, manDetails, roleArray, roleDetails):
                 console.log('Bad Reference');
                 })
     .catch(err => console.log(err));
@@ -71,9 +71,9 @@ employeesManagers = function(number){
             fullNames.push(fName);
         })
         console.log("");
-    (number === 'One') ? funcLink.chooseNewMan(employeeResults, fullNames):
-    (number === 'Two') ? funcLink.deleteEmployee(employeeResults, fullNames):
-    (number === 'Three') ? funcLink.viewByManQuest(employeeResults):
+    (number === 1) ? funcLink.chooseNewMan(employeeResults, fullNames):
+    (number === 2) ? funcLink.deleteEmployee(employeeResults, fullNames):
+    (number === 3) ? funcLink.viewByManQuest(employeeResults):
     console.log('Bad reference');
     })
     .catch(err => console.log(err));
