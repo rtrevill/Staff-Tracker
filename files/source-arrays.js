@@ -71,6 +71,7 @@ employeesManagers = function(number){
         console.log("");
     (number === 'One') ? funcLink.chooseNewMan(employeeResults, fullNames):
     (number === 'Two') ? funcLink.deleteEmployee(employeeResults, fullNames):
+    (number === 'Three') ? funcLink.viewByManQuest(employeeResults, fullNames):
     console.log('Bad reference');
     })
     .catch(err => console.log(err));
