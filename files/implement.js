@@ -138,7 +138,9 @@ updateRole = function(nameArray, nameDetails, roleArray, roleDetails){
 };
 
 
-
+// function with logic to appoint new manager
+// Defines arrays for inquirer, then runs enquirer
+// Then appoints id's for the employee and the new manager 
 chooseNewMan = function(employeeResults, fullNames){
     const employFullName = [...fullNames];
     const manFullNames = [...fullNames];
@@ -153,15 +155,18 @@ chooseNewMan = function(employeeResults, fullNames){
                 (idOfTwo = null)}
             else{
             const person2 = fullNames.indexOf(answer.Manager);
-            idOfTwo = employeeResults[person2].id;}
-
+            idOfTwo = employeeResults[person2].id;
+            }
             new Queries.sqlQueries().upMan(idOfOne, idOfTwo);
             setTimeout(() => index.questions(),200);
             })
         .catch(err => console.log(err))
 };
 
-
+// Function to view the employees that have a chosen manager appointed
+// Gets all the manager id's from the employee list, then creates a new array with only one instance of each manager_id number
+// Then creates an array of full names with ids, and then uses this to create a list of current manager names to use in inquirer.
+// Inquirer is run and the response name is correlated with an ID number, which is used for an SQL query.
 viewByManQuest = function(employeeResults){
     let manIDArray;
     let manFullNames = [];
@@ -179,8 +184,8 @@ viewByManQuest = function(employeeResults){
     })
     .then(() => {
         employeeResults.forEach(object => {
-            let newObj = {id: object.id,
-                        fullName: object.first_name + " " + object.last_name}
+            let newObj = {'id': object.id,
+                        'fullName': object.first_name + " " + object.last_name}
             fullnameandID.push(newObj);
         })
         manIDArray.forEach(number => {
@@ -203,6 +208,9 @@ viewByManQuest = function(employeeResults){
     .catch(err => console.log(err));
 };
 
+// function to view all employees in a department
+// Run inquirer with a list of departments, then correlate the response with an ID number,
+// then use the department id number to perform an SQL query
 employeesByDept = function(departmentArray, deptDetails){
     inquirer
         .prompt(new Questions().viewbyDeptQ(departmentArray))
@@ -214,6 +222,9 @@ employeesByDept = function(departmentArray, deptDetails){
         .catch(err => console.log(err));
 };
 
+
+// Function to display the total of the salaries in a chosen department
+// Run inquirer to find a department, then use that department ID to perform an SQL query
 sumOfSalaries = function(departmentArray, deptDetails){
     inquirer
         .prompt(new Questions().totalSalariesQ(departmentArray))

@@ -1,8 +1,11 @@
-const mysql = require('mysql2');
 const index = require('../index');
+
+// npm package to enable displaying data as a table
 const table = require('table').table;
 
 
+
+// function to display the output data in a table
 function displaytable(data){
     let newArray = [];
     let arrayTitles = [];
@@ -16,14 +19,15 @@ function displaytable(data){
     };
 
 console.log(table(newArray));
-   
 };
   
 
 
-
+// Class 'sqlQueries' contains almost all the queries for the application.
+// Some functions in this class also display output 
 class sqlQueries {
 
+// 3 x functions to run SQL queries to display All Roles, All Departments, and All Employees
 viewRoles = function(){
     db.promise().query(`SELECT role.id, title, name AS department, salary FROM role JOIN department ON role.department_id = department.id`)
     .then(result => displaytable(result[0]))
@@ -64,36 +68,41 @@ viewEmployees = function(){
     .catch(err => console.log(err));
 };
 
+// Query to update employee's role
 upRole = function(roleID, nameID){
     db.promise().query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${nameID}`)
     .then(console.log(`updated employees role`))
     .catch(err => console.log(err));
 };
 
+// Query to Add a new department
 addDept = function(response){
     const deptName = response.newDepart;
     db.query(`INSERT INTO department (name) VALUES ("${deptName}")`);
     console.log(`added ${deptName} to the database`);
 };
 
+// Query to add a new role
 newRole = function(roleName, roleSal, roleID){
     db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${roleName}",${roleSal},${roleID})`);
     console.log(`added ${roleName} to the database`);
 };
 
+// Query to add a new employee
 newEmployee = function(fName, lName, roleID, manID){
     db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${fName}", "${lName}",${roleID},${manID})`)
     .then(console.log(`added ${fName} ${lName} to the database`))
     .catch(err => console.log(err));
 };
 
+// Query to update an employee's manager
 upMan = function(idOfOne, idOfTwo){
     db.promise().query(`UPDATE employee SET manager_id = ${idOfTwo} WHERE id= ${idOfOne}`)
     .then(console.log('Manager updated'))
     .catch(err => console.log(err));
 }
 
-
+// Query to view all employees with a single selected manager
 viewByMan = function(responseID){
     db.promise().query(`SELECT e.id, first_name, last_name, name AS department, title 
         FROM employee e 
@@ -106,7 +115,7 @@ viewByMan = function(responseID){
     .catch(err => console.log(err))
 };
 
-
+// Query to display all the employees working within a selected single department
 viewByDepart = function(responseID){
     db.promise().query(`SELECT e.id, first_name, last_name, title 
         FROM employee e 
@@ -120,6 +129,7 @@ viewByDepart = function(responseID){
     .catch(err => console.log(err))
 };
 
+// Query to display the Sum/Total amount of wages being spent in a selected single department 
 salariesTotal = function(responseID){
     db.promise().query(`SELECT SUM(salary) FROM role 
         JOIN employee ON role.id = employee.role_id
