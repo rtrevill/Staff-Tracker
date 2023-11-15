@@ -166,7 +166,7 @@ chooseNewMan = function(employeeResults, fullNames){
 };
 
 
-viewByManQuest = function(employeeResults, fullNames){
+viewByManQuest = function(employeeResults){
     let manIDArray;
     let manFullNames = [];
     let fullnameandID = [];
@@ -179,78 +179,55 @@ viewByManQuest = function(employeeResults, fullNames){
             trialArray.push(x);
         })
         let trialArray2 = trialArray.flat()
-        manIDArray = [...new Set(trialArray2)]
+        manIDArray = [...new Set(trialArray2)];
     })
     .then(() => {
         employeeResults.forEach(object => {
             let newObj = {id: object.id,
                         fullName: object.first_name + " " + object.last_name}
-                fullnameandID.push(newObj);
+            fullnameandID.push(newObj);
         })
-        // console.table(fullnameandID);
         manIDArray.forEach(number => {
             const result = fullnameandID.find(item => item.id === number);
             if (result !==undefined){
             const resultName = result.fullName;
             manFullNames.push(resultName);
             }
-
         })
     })
     .then(() =>{
     inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'manager',
-                message: 'For which manager would you like to see a list of employees?',
-                choices: manFullNames
-            }
-        ])
+        .prompt(new Questions().viewByManagerQ(manFullNames))
         .then((response) => {
-            // console.log(fullnameandID, response);
             const responseFind = fullnameandID.find(item => item.fullName === response.manager);
             const responseID = responseFind.id
-            console.log(responseID);
-            db.promise().query(`SELECT e.id, first_name, last_name, name AS department, title 
-                                FROM employee e 
-                                JOIN role ON e.role_id = role.id
-                                JOIN department ON role.department_id = department.id
-                                WHERE manager_id = ${responseID}`)
-            .then(result => { console.table(result[0])
-                                new index.questions()}
-            )
+            new Queries.sqlQueries().viewByMan(responseID)
         })
     })
+    .catch(err => console.log(err));
 };
 
 employeesByDept = function(departmentArray, deptDetails){
     inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'department',
-                message: 'For which department would you like to see a list of employees?',
-                choices: departmentArray
-            }
-        ])
+        .prompt(new Questions().viewbyDeptQ(departmentArray))
         .then((response) => {
             const responseFind = deptDetails.find(item => item.name === response.department);
             const responseID = responseFind.id
-            console.log(responseID);
-            db.promise().query(`SELECT e.id, first_name, last_name, title 
-                                FROM employee e 
-                                JOIN role ON e.role_id = role.id
-                                JOIN department d ON role.department_id = d.id
-                                WHERE d.id = ${responseID}`)
-            .then(result => { console.table(result[0])
-                                new index.questions()}
-            )
+            new Queries.sqlQueries().viewByDepart(responseID);
         })
-    
+        .catch(err => console.log(err));
 };
 
-
+sumOfSalaries = function(departmentArray, deptDetails){
+    inquirer
+        .prompt(new Questions().totalSalariesQ(departmentArray))
+        .then((response) => {
+            const responseFind = deptDetails.find(item => item.name === response.department);
+            const responseID = responseFind.id
+            new Queries.sqlQueries().salariesTotal(responseID);
+            })
+        .catch(err => console.log(err));
+};
 
 };
 

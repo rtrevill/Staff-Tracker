@@ -93,41 +93,42 @@ upMan = function(idOfOne, idOfTwo){
     .catch(err => console.log(err));
 }
 
-viewByMan = function(){
-    db.promise().query(`SELECT e.first_name, e.last_name, m.first_name AS manfirst, m.last_name AS manlast
-                        FROM employee e
-                        LEFT OUTER JOIN employee m
-                        ON m.id = e.manager_id
-                        ORDER BY m.first_name ASC`)
-    .then(result => {
-        const newArray = result[0].map(({first_name, last_name, manfirst, manlast}) =>
-        ({  'first_name': first_name,
-            'last_name': last_name,
-            'manager': manfirst + " " + manlast}))
-        newArray.forEach(element => {
-            if (element.manager === 'null null'){
-                element.manager = null;
-            };
-        })
-        displaytable(newArray);
-        })
-    .catch(err => console.log(err));
-};
 
-viewByDepart = function(){
-    db.promise().query(`SELECT first_name, last_name, name AS department
-                        FROM employee
-                        JOIN role
-                        ON role.id = employee.role_id
-                        JOIN department
-                        ON role.department_id = department.id
-                        ORDER BY name ASC`)
-    .then(result => displaytable(result[0]))
-    .catch(err => console.log(err));
+viewByMan = function(responseID){
+    db.promise().query(`SELECT e.id, first_name, last_name, name AS department, title 
+        FROM employee e 
+        JOIN role ON e.role_id = role.id
+        JOIN department ON role.department_id = department.id
+        WHERE manager_id = ${responseID}`)
+    .then(result => { 
+        displaytable(result[0])
+        new index.questions()})
+    .catch(err => console.log(err))
 };
 
 
+viewByDepart = function(responseID){
+    db.promise().query(`SELECT e.id, first_name, last_name, title 
+        FROM employee e 
+        JOIN role ON e.role_id = role.id
+        JOIN department d ON role.department_id = d.id
+        WHERE d.id = ${responseID}`)
+    .then(result => { 
+        displaytable(result[0])
+        new index.questions()})
+    .catch(err => console.log(err))
+};
 
+salariesTotal = function(responseID){
+    db.promise().query(`SELECT SUM(salary) FROM role 
+        JOIN employee ON role.id = employee.role_id
+        WHERE role.department_id = ${responseID}`)
+    .then((result) => {
+        displaytable(result[0]);
+        index.questions();
+    })
+    .catch(err => console.log(err));
+};
 
 };
 
