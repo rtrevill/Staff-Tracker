@@ -222,9 +222,34 @@ viewByManQuest = function(employeeResults, fullNames){
             )
         })
     })
+};
 
+employeesByDept = function(departmentArray, deptDetails){
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'For which department would you like to see a list of employees?',
+                choices: departmentArray
+            }
+        ])
+        .then((response) => {
+            const responseFind = deptDetails.find(item => item.name === response.department);
+            const responseID = responseFind.id
+            console.log(responseID);
+            db.promise().query(`SELECT e.id, first_name, last_name, title 
+                                FROM employee e 
+                                JOIN role ON e.role_id = role.id
+                                JOIN department d ON role.department_id = d.id
+                                WHERE d.id = ${responseID}`)
+            .then(result => { console.table(result[0])
+                                new index.questions()}
+            )
+        })
+    
+};
 
-}
 
 
 };

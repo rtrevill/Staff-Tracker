@@ -19,6 +19,7 @@ getDeptDetails = function(number){
             console.log("");
             (number === 'One') ? funcLink.addRole(departmentArray, deptDetails):
             (number === 'Two') ? funcLink.deleteDepartment(departmentArray, deptDetails):
+            (number === 'Three') ? funcLink.employeesByDept(departmentArray, deptDetails):
             console.log("Bad Reference");
             })
     .catch(err => console.log(err));
