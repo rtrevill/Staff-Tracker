@@ -165,6 +165,68 @@ chooseNewMan = function(employeeResults, fullNames){
         .catch(err => console.log(err))
 };
 
+
+viewByManQuest = function(employeeResults, fullNames){
+    let manIDArray;
+    let manFullNames = [];
+    let fullnameandID = [];
+
+    db.promise().query(`SELECT manager_id FROM employee`)
+    .then((result) =>{
+        let trialArray = [];
+        result[0].forEach(object =>{
+            let x = Object.values(object);
+            trialArray.push(x);
+        })
+        let trialArray2 = trialArray.flat()
+        manIDArray = [...new Set(trialArray2)]
+    })
+    .then(() => {
+        employeeResults.forEach(object => {
+            let newObj = {id: object.id,
+                        fullName: object.first_name + " " + object.last_name}
+                fullnameandID.push(newObj);
+        })
+        // console.table(fullnameandID);
+        manIDArray.forEach(number => {
+            const result = fullnameandID.find(item => item.id === number);
+            if (result !==undefined){
+            const resultName = result.fullName;
+            manFullNames.push(resultName);
+            }
+
+        })
+    })
+    .then(() =>{
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'For which manager would you like to see a list of employees?',
+                choices: manFullNames
+            }
+        ])
+        .then((response) => {
+            // console.log(fullnameandID, response);
+            const responseFind = fullnameandID.find(item => item.fullName === response.manager);
+            const responseID = responseFind.id
+            console.log(responseID);
+            db.promise().query(`SELECT e.id, first_name, last_name, name AS department, title 
+                                FROM employee e 
+                                JOIN role ON e.role_id = role.id
+                                JOIN department ON role.department_id = department.id
+                                WHERE manager_id = ${responseID}`)
+            .then(result => { console.table(result[0])
+                                new index.questions()}
+            )
+        })
+    })
+
+
+}
+
+
 };
 
   module.exports = {

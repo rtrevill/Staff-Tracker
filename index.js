@@ -35,6 +35,7 @@ function questions(){
 questions();
 
 
+
 function viewRequests(request){
     const linkOne = (new SourceArrays.BaseInformation());
     const query = (new Queries.sqlQueries())
@@ -47,13 +48,14 @@ function viewRequests(request){
     const viewCheck = new RegExp('View*');
     if (viewCheck.test(selection)){
     (selection === "View All Employees") ? query.viewEmployees():
-    (selection === "View employees by manager") ? query.viewByMan():
+    // (selection === "View employees by manager") ? query.viewByMan():
     (selection === "View employees by department") ? query.viewByDepart():
     (selection === "View All Departments") ? query.viewDeparts():
     (selection === "View All Roles") ? query.viewRoles(): console.log('No Return 1');
     setTimeout(() => questions(), 200);
     return;
     }
+    (selection === "employees by manager") ? linkOne.employeesManagers('Three'):
     (selection === "Delete Employee") ? linkOne.employeesManagers('Two'):
     (selection === "Add Department") ? new Implement.Functions().addDepartment():
     (selection === "Add Role") ? linkOne.getDeptDetails('One'):
