@@ -20,6 +20,7 @@ getDeptDetails = function(number){
             (number === 'One') ? funcLink.addRole(departmentArray, deptDetails):
             (number === 'Two') ? funcLink.deleteDepartment(departmentArray, deptDetails):
             (number === 'Three') ? funcLink.employeesByDept(departmentArray, deptDetails):
+            (number === 'Four') ? funcLink.sumOfSalaries(departmentArray, deptDetails):
             console.log("Bad Reference");
             })
     .catch(err => console.log(err));
@@ -72,7 +73,7 @@ employeesManagers = function(number){
         console.log("");
     (number === 'One') ? funcLink.chooseNewMan(employeeResults, fullNames):
     (number === 'Two') ? funcLink.deleteEmployee(employeeResults, fullNames):
-    (number === 'Three') ? funcLink.viewByManQuest(employeeResults, fullNames):
+    (number === 'Three') ? funcLink.viewByManQuest(employeeResults):
     console.log('Bad reference');
     })
     .catch(err => console.log(err));

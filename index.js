@@ -55,6 +55,7 @@ function viewRequests(request){
     return;
     }
     (selection === "Employees by department") ? linkOne.getDeptDetails('Three'):
+    (selection === "find total wages for department") ? linkOne.getDeptDetails('Four'):
     (selection === "Employees by manager") ? linkOne.employeesManagers('Three'):
     (selection === "Delete Employee") ? linkOne.employeesManagers('Two'):
     (selection === "Add Department") ? new Implement.Functions().addDepartment():

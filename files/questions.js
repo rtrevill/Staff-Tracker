@@ -20,6 +20,7 @@ listQuestions = function(){
                 "Add Department",
                 "Delete Department",
                 "Update employee managers",
+                "find total wages for department",
                 "Quit"
             ]
         }
@@ -158,6 +159,43 @@ deleteDepartQuestions = function(departmentArray){
         }
     ]
     return delDep;
+};
+
+viewByManagerQ = function(manFullNames){
+    const manCheck = [
+        {
+            type: 'list',
+            name: 'manager',
+            message: 'For which manager would you like to see a list of employees?',
+            choices: manFullNames
+        }
+
+    ]
+    return manCheck;
+};
+
+viewbyDeptQ = function(departmentArray){
+    const deptCheck = [
+        {
+            type: 'list',
+            name: 'department',
+            message: 'For which department would you like to see a list of employees?',
+            choices: departmentArray
+        }
+    ]
+    return deptCheck;
+};
+
+totalSalariesQ = function(departmentArray){
+    const departCheck = [
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Which department would you loke to see the combined salaries?',
+            choices: departmentArray
+        }
+    ]
+    return departCheck;
 };
 
 };
