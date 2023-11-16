@@ -2,7 +2,7 @@
 
 ### The URL of the GitHub repository: https://github.com/rtrevill/Staff-Tracker
 
-### Link to the walkthrough video: 
+### Link to the walkthrough video: https://drive.google.com/file/d/1TZ_qng05DZ0Kr1xkYcsMebZz9FBPRCpE/view
 
 Developers frequently have to create interfaces that allow non-developers to easily view and interact with information stored in databases. These interfaces are called content management systems (CMS).   
 The assignment was to build a command-line application from scratch to manage a company's employee database, using Node.js, Inquirer, and MySQL.
